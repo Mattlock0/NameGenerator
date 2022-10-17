@@ -42,13 +42,13 @@ def print_names(generated_names):
     # making it look pretty
     if len(generated_names) == 1:
         print(f'Your name is: {generated_names[0]}!')
-        file = open("generatedNamesList.txt", "a")
+        file = open("../data/generatedNamesList.txt", "a")
         file.write(str(date.today()) + " |  " + generated_names[0] + "\n")
         file.close()
 
     elif len(generated_names) > 1:
         print(f'Your names are: ', end="")
-        file = open("generatedNamesList.txt", "a")
+        file = open("../data/generatedNamesList.txt", "a")
         file.write(str(date.today()) + " |  ")  # line header
 
         for name in generated_names:
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     print(f'Welcome to the name generator!')
 
     gen = generator()  # setup generator
-    config = config('settings.ini')  # setup config
+    config = config('../data/settings.ini')  # setup config
 
     if config.read_bool('general', 'printAllTemplates'):
         templates = config.read_list('nameGeneration', 'allTemplates')
@@ -119,8 +119,9 @@ if __name__ == '__main__':
             quit()
 
         if route == 3:
-            file = open("generatedNamesList.txt", "r")
+            file = open("../data/generatedNamesList.txt", "r")
             print(file.read())
+            file.close()
             quit()
 
     while route:

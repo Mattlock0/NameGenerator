@@ -34,7 +34,7 @@ class config:
 
         new_percent = input('Enter new percentage: ')
         self.config_f.set(sec, chances.get(inp), new_percent)
-        self.config_f.write('settings.ini')
+        self.config_f.write('../data/settings.ini')
 
         print(f'Read-in percentage: {self.config_f.get(sec, chances.get(inp))}')
 
