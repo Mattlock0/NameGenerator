@@ -64,7 +64,7 @@ def flatten_and_sort(_2d_list, parsing):
 
 
 if __name__ == '__main__':
-    file = open("all_names.csv", "r")
+    file = open("../data/all_names.csv", "r")
     data = list(csv.reader(file))
     file.close()
 
