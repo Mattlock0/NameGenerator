@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from .generation import Generator
 from .generation import parse_template
 from .config import Config
+import logging as log
 import sys
 
 NAME_FONT_SIZE = 20
