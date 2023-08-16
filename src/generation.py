@@ -1,7 +1,7 @@
 import random
 
 
-class generator:
+class Generator:
     def __init__(self):
         self.literal_flag = False
         self.vowels = ['a', 'e', 'i', 'o', 'u', 'y']
@@ -11,10 +11,10 @@ class generator:
         self.diagraph_letters = ['c', 's', 't', 'w', 'q']  # maybe ck and ph?
 
         # chance defaults, overloaded by read_config
-        self.rare_chance = 5
-        self.double_chance = 5
-        self.qu_chance = 5
-        self.diagraph_chance = 5
+        self.rare_chance = 1
+        self.double_chance = 1
+        self.qu_chance = 1
+        self.diagraph_chance = 1
 
     def chance(self, gen):
         if gen == 'r':
@@ -72,3 +72,27 @@ class generator:
             return random.choice(self.consonants + self.rare_consonants + self.vowels)
         else:
             return let  # it is not a generated letter and we send it back literally
+
+
+def parse_template(gen: Generator, template: str):
+    letters = ([*template])  # parse the template into a list of its letters
+    name = ""
+
+    for letter in letters:
+        name += gen.generate_letter(letter)
+
+    return name  # would pass in name to process_name here
+
+
+def process_name(gen, name):
+    processed_name = ""
+    # check for strange letter combinations here (qu must go together, Lr is odd)
+    if "q" in name and "qu" not in name:
+        if gen.chance('q'):  # currently a 7% chance
+            processed_name = name.replace("q", "qu")
+        else:
+            processed_name = name.replace("q", gen.generate_letter('v'))
+            while "q" in processed_name:
+                processed_name = name.replace("q", gen.generate_letter('v'))
+
+    return processed_name

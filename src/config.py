@@ -1,10 +1,22 @@
 import configparser
 
 
-class config:
+class Config:
     def __init__(self, ini_file):
         self.config_f = configparser.ConfigParser()
         self.config_f.read(ini_file)  # for reading
+
+    def read(self, section, key):
+        return self.config_f[section][key]
+
+    def read_bool(self, section, key):
+        return self.config_f.getboolean(section, key)
+
+    def read_int(self, section, key):
+        return self.config_f.getint(section, key)
+
+    def read_list(self, section, key):
+        return self.config_f.get(section, key).split(',')
 
     def print_config(self):
         for section_name in self.config_f.sections():
@@ -52,19 +64,13 @@ class config:
 
     def read_config(self, gen):
         sec1 = 'letterGeneration'
-        gen.rare_chance = int(self.config_f[sec1]['rare_chance'])
-        gen.double_chance = int(self.config_f[sec1]['double_chance'])
-        gen.qu_chance = int(self.config_f[sec1]['qu_chance'])
-        gen.diagraph_chance = int(self.config_f[sec1]['diagraph_chance'])
+        gen.rare_chance = self.read_int(sec1, 'rare_chance')
+        gen.double_chance = self.read_int(sec1, 'double_chance')
+        gen.qu_chance = self.read_int(sec1, 'qu_chance')
+        gen.diagraph_chance = self.read_int(sec1, 'diagraph_chance')
 
-    def read(self, section, key):
-        return self.config_f[section][key]
-
-    def read_bool(self, section, key):
-        return self.config_f.getboolean(section, key)
-
-    def read_int(self, section, key):
-        return self.config_f.getint(section, key)
-
-    def read_list(self, section, key):
-        return self.config_f.get(section, key).split(',')
+    def get_templates(self) -> list:
+        if self.read_bool('general', 'printAllTemplates'):
+            return self.read_list('nameGeneration', 'allTemplates')
+        else:
+            return self.read_list('nameGeneration', 'popularTemplates')
