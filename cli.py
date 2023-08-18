@@ -11,9 +11,8 @@ from src.__main__ import main
 #  Let users change settings
 #  Potential: replace letters from certain combinations (with process_name)
 #  Potential: add name meanings (prefixes & suffixes)
-#  Add change settings option to GUI
-#  Improve look of GUI (button style, text, clean scrollbar, spacing)
-#  Add error for missing setting (or just continue without it?)
+#  Save generated names to a file
+#  Allow user to create their own settings.ini?
 
 if __name__ == '__main__':
     main()

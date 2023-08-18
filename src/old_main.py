@@ -1,19 +1,6 @@
 from datetime import date
 from generation import Generator
 from config import Config
-from generation import parse_template
-from PyQt5 import QtCore
-
-#  most common english letters:  e, t, a, i, o, n, s, h, r
-#  most common starting letters: t, a, o, d, w
-#  most common ending letters:   e, s, d, t
-#  english diagraphs:            ch, sh, th, wh, qu [ck, ph?]
-
-#  TO-DO
-#  Add a grab bag choice (with any template)?
-#  Let users change settings
-#  Potential: replace letters from certain combinations (with process_name)
-#  Potential: add name meanings (prefixes & suffixes)
 
 
 def print_names(generated_names):
@@ -41,30 +28,6 @@ def print_names(generated_names):
         print(f'You don\'t want any names...? :(')
 
 
-def choose_template(templates):
-    print(f'Please select a template from the ones below.')
-    print(f'KEY: c = consonant | v = vowel | * = literal letter')
-
-    # prints all templates in order
-    for x in range(len(templates)):
-        print(f'{str(x + 1)}) {templates[x]}')
-    print(f'{str(len(templates) + 1)}) Custom')
-
-    # allows user to choose which template they would like
-    choice = int(input('Enter the corresponding number: '))
-    while choice > len(templates) + 1 or choice < 1:
-        print(f'Improper selection. Make another.')
-        choice = int(input('Enter the corresponding number: '))
-
-    # Checks between custom and prebuilt templates
-    if choice == len(templates) + 1:
-        selected = input('Enter your template (/ to force a letter): ')
-    else:
-        selected = templates[choice - 1]  # the list is always off by one
-
-    return selected
-
-
 if __name__ == '__main__':
     print(f'Welcome to the name generator!')
 
@@ -77,31 +40,7 @@ if __name__ == '__main__':
     #
     # ##### OLD CODE #####
     #
-    # route = 1  # setting up in case we aren't displaying print
-    #
-    # if config.read_bool('general', 'displaySettings'):  # if we give the settings option to users
-    #     print(f'Would you like to...')
-    #     print(f'1) Generate a name')
-    #     print(f'2) Change the settings')
-    #
-    #     to_print = config.read_bool('general', 'displayPrint')
-    #     if to_print:
-    #         print(f'3) See all generated names')
-    #
-    #     route = int(input('Enter your choice: '))
-    #     while route < 1 or (not to_print and route > 2) or (to_print and route > 3):  # trust me, it's right.
-    #         print(f'Improper selection. Make another.')
-    #         route = int(input('Enter your choice: '))
-    #
-    #     if route == 2:
-    #         config.change_settings()
-    #         quit()
-    #
-    #     if route == 3:
-    #         file = open("../data/generatedNamesList.txt", "r")
-    #         print(file.read())
-    #         file.close()
-    #         quit()
+    # route = True  # setting up in case we aren't displaying print
     #
     # while route:
     #     choice = choose_template(templates)  # prompts user to select a template

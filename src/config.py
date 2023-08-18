@@ -1,10 +1,27 @@
 import configparser
+import logging as log
 
 
 class Config:
     def __init__(self, ini_file):
         self.config_f = configparser.ConfigParser()
-        self.config_f.read(ini_file)  # for reading
+        self.config_f.read(ini_file)
+        self.read_config_file = True
+
+    def read_config(self, gen) -> bool:
+        sec1 = 'letterGeneration'
+
+        try:  # have to store the failure in case the settings file was misplaced
+            gen.rare_chance = self.read_int(sec1, 'rare_chance')
+        except configparser.NoSectionError:
+            log.error("settings.ini file not found. Continuing with defaults.")
+            self.read_config_file = False
+            return False
+
+        gen.double_chance = self.read_int(sec1, 'double_chance')
+        gen.qu_chance = self.read_int(sec1, 'qu_chance')
+        gen.diagraph_chance = self.read_int(sec1, 'diagraph_chance')
+        return True
 
     def read(self, section, key):
         return self.config_f[section][key]
@@ -61,13 +78,6 @@ class Config:
         #print(f'Settings in {sec}: {self.r_config.items(sec)}')
         if sec == 'letterGeneration':
             self.change_chances()
-
-    def read_config(self, gen):
-        sec1 = 'letterGeneration'
-        gen.rare_chance = self.read_int(sec1, 'rare_chance')
-        gen.double_chance = self.read_int(sec1, 'double_chance')
-        gen.qu_chance = self.read_int(sec1, 'qu_chance')
-        gen.diagraph_chance = self.read_int(sec1, 'diagraph_chance')
 
     def get_templates(self) -> list:
         if self.read_bool('general', 'printAllTemplates'):

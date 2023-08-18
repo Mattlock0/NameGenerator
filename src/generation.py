@@ -11,10 +11,10 @@ class Generator:
         self.diagraph_letters = ['c', 's', 't', 'w', 'q']  # maybe ck and ph?
 
         # chance defaults, overloaded by read_config
-        self.rare_chance = 1
-        self.double_chance = 1
-        self.qu_chance = 1
-        self.diagraph_chance = 1
+        self.rare_chance = 8
+        self.double_chance = 13
+        self.qu_chance = 7
+        self.diagraph_chance = 15
 
     def chance(self, gen):
         if gen == 'r':
