@@ -1,5 +1,5 @@
 # NameGenerator
-Mattlock's name generator! With this project, you can generate any names you wish from templates and change the settings while you're at it.
+Welcome to Mattlock's name generator! The purpose of this project is not to copy other name generators. NameGenerator creates unbiased, random names based on the structures of consonants and vowels found in the English language. They're rarely perfect names you can use straight from the generator, but they can provide a starting point from which to create totally original names! There are zero limitations on what can and cannot be generated, so be aware.
 
 If you're running from cli.py, make sure the CONFIG_PATH (main.py, line 13) is set to RUN_CONFIG_PATH.
 
