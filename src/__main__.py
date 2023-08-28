@@ -5,6 +5,7 @@ from .generation import parse_template
 from .config import Config
 from .shading import DARKMODE
 from .shading import LIGHTMODE
+from .popup import SettingsUI
 import logging as log
 import sys
 
@@ -24,6 +25,7 @@ class GeneratorUI(object):
         self.gen = Generator()  # setup generator
         self.config = Config(CONFIG_PATH)
         self.config.read_config(self.gen)
+        self.settings_window = QtWidgets.QMainWindow()
 
         if self.config.read_config(self.gen):
             self.template_list = self.config.get_templates()
@@ -175,6 +177,12 @@ class GeneratorUI(object):
 
         self.names_list.setText(new_name_list)
 
+    def get_shading(self, literal=False):
+        if self.action_shading_mode.text() == "Light Mode":
+            return DARKMODE if literal else LIGHTMODE, "Dark Mode"
+        else:
+            return LIGHTMODE if literal else DARKMODE, "Light Mode"
+
     def settings(self):
         if not self.config.read_config_file:
             msg = QMessageBox()
@@ -185,13 +193,14 @@ class GeneratorUI(object):
 
         log.info("Settings chosen...")
 
+        w = SettingsUI(self.config, self.gen, self.get_shading(True)[0])
+        w.setupUi(self.settings_window)
+        self.settings_window.show()
+
     def set_shading(self, window: QtWidgets.QMainWindow):
-        if self.action_shading_mode.text() == "Light Mode":
-            mode = LIGHTMODE
-            self.action_shading_mode.setText("Dark Mode")
-        else:
-            mode = DARKMODE
-            self.action_shading_mode.setText("Light Mode")
+        ret = self.get_shading()
+        self.action_shading_mode.setText(ret[1])
+        mode = ret[0]
 
         window.setStyleSheet(f"background-color:{mode.background}; color:{mode.text}")
 

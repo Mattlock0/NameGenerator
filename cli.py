@@ -14,5 +14,9 @@ from src.__main__ import main
 #  Save generated names to a file
 #  Allow user to create their own settings.ini?
 
+#### BUGS ####
+#  Settings window crashes the program after opening it twice
+#  Settings window crashes when user enters letters
+
 if __name__ == '__main__':
     main()
