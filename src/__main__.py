@@ -12,6 +12,7 @@ import sys
 NAME_FONT_SIZE = 20
 TEXT_FONT_SIZE = 15
 DEFAULT_NUM_NAMES = 7
+MAX_NAME_GEN = 40
 
 BUILD_CONFIG_PATH = 'settings.ini'
 RUN_CONFIG_PATH = 'data/settings.ini'
@@ -67,7 +68,7 @@ class GeneratorUI(object):
         self.num_sel = QtWidgets.QSpinBox(self.centralwidget)
         self.num_sel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.num_sel.setMinimum(1)
-        self.num_sel.setMaximum(20)
+        self.num_sel.setMaximum(MAX_NAME_GEN)
         self.num_sel.setValue(DEFAULT_NUM_NAMES)
         self.num_sel.setFont(self.get_font(TEXT_FONT_SIZE))
         self.num_sel.setObjectName("num_sel")

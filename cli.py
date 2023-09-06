@@ -13,6 +13,7 @@ from src.__main__ import main
 #  Potential: add name meanings (prefixes & suffixes)
 #  Save generated names to a file
 #  Allow user to create their own settings.ini?
+#  Branch off of gui-test to change settings to QDialog
 
 #### BUGS ####
 #  Settings window crashes the program after opening it twice
