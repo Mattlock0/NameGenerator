@@ -44,41 +44,6 @@ class Config:
                 print('\t%s: %s' % (name, value))
         # full example, separate per section
 
-    def change_chances(self):
-        # have this print out for any setting (parse options into a dict)
-
-        sec = "letterGeneration"
-
-        print(f'--==Current Chances==--\n'
-              f'1) Rare Consonants:\t\t{self.config_f.get(sec, "rare_chance")}%\n'
-              f'2) Double Letters:\t\t{self.config_f.get(sec, "double_chance")}%\n'
-              f'3) Qu Replacement:\t\t{self.config_f.get(sec, "qu_chance")}%\n'
-              f'4) Diagraphs:\t\t\t{self.config_f.get(sec, "diagraph_chance")}%')
-
-        chances = {1: "rare_chance", 2: "double_chance", 3: "qu_chance", 4: "diagraph_chance"}
-        inp = int(input('Which percentage would you like to change? '))
-
-        while inp < 1 or inp > 4:
-            inp = int(input('Improper input. Enter your choice: '))
-
-        new_percent = input('Enter new percentage: ')
-        self.config_f.set(sec, chances.get(inp), new_percent)
-        self.config_f.write('../data/settings.ini')
-
-        print(f'Read-in percentage: {self.config_f.get(sec, chances.get(inp))}')
-
-    def change_settings(self):
-        # print(f'Settings sections: {self.config_f.sections()}')
-        self.print_config()
-        sec = input('Investigate which section? ')
-
-        while sec not in self.config_f.sections():
-            sec = input('Improper input. Enter name of section: ')
-
-        #print(f'Settings in {sec}: {self.r_config.items(sec)}')
-        if sec == 'letterGeneration':
-            self.change_chances()
-
     def get_templates(self) -> list:
         if self.read_bool('general', 'printAllTemplates'):
             return self.read_list('nameGeneration', 'allTemplates')

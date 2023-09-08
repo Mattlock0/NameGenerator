@@ -1,14 +1,15 @@
 import random
 
+VOWELS = ['a', 'e', 'i', 'o', 'u', 'y']
+CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w']
+RARE_CONSONANTS = ['j', 'q', 'x', 'z']
+DOUBLE_LETTERS = ['e', 'l', 'n', 'o', 's', 't']  # maybe r's?
+DIAGRAPH_LETTERS = ['c', 's', 't', 'w', 'q']  # maybe ck and ph?
+
 
 class Generator:
     def __init__(self):
         self.literal_flag = False
-        self.vowels = ['a', 'e', 'i', 'o', 'u', 'y']
-        self.consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w']
-        self.rare_consonants = ['j', 'q', 'x', 'z']
-        self.double_letters = ['e', 'l', 'n', 'o', 's', 't']  # maybe r's?
-        self.diagraph_letters = ['c', 's', 't', 'w', 'q']  # maybe ck and ph?
 
         # chance defaults, overloaded by read_config
         self.rare_chance = 8
@@ -16,7 +17,7 @@ class Generator:
         self.qu_chance = 7
         self.diagraph_chance = 15
 
-    def chance(self, gen):
+    def chance(self, gen: str) -> bool:
         if gen == 'r':
             return True if random.randrange(100) < self.rare_chance else False
         elif gen == 'd':
@@ -26,32 +27,32 @@ class Generator:
         elif gen == 'g':
             return True if random.randrange(100) < self.diagraph_chance else False
 
-    def generate_consonant(self, is_upper):
+    def generate_consonant(self, is_upper: bool) -> str:
         if is_upper:  # letter is upper case
-            gen_let = random.choice(self.consonants).upper()  # generate a basic uppercase consonant
-            gen_let = random.choice(self.rare_consonants).upper() if self.chance('r') else gen_let  # rare chance
-            if gen_let.lower() in self.diagraph_letters and self.chance('g'):  # check for diagraph if possible
+            gen_let = random.choice(CONSONANTS).upper()  # generate a basic uppercase consonant
+            gen_let = random.choice(RARE_CONSONANTS).upper() if self.chance('r') else gen_let  # rare chance
+            if gen_let.lower() in DIAGRAPH_LETTERS and self.chance('g'):  # check for diagraph if possible
                 gen_let = gen_let + 'u' if gen_let == 'Q' else gen_let + 'h'  # add the appropriate letter on
 
             return gen_let  # finally, return the letter
 
         # letter is lower case
-        gen_let = random.choice(self.consonants)
-        gen_let = random.choice(self.rare_consonants) if self.chance('r') else gen_let
-        if gen_let in self.diagraph_letters and self.chance('g'):
+        gen_let = random.choice(CONSONANTS)
+        gen_let = random.choice(RARE_CONSONANTS) if self.chance('r') else gen_let
+        if gen_let in DIAGRAPH_LETTERS and self.chance('g'):
             gen_let = gen_let + 'u' if gen_let == 'q' else gen_let + 'h'
-        elif gen_let in self.double_letters and self.chance('d'):  # potentially create double letter
+        elif gen_let in DOUBLE_LETTERS and self.chance('d'):  # potentially create double letter
             gen_let = gen_let + gen_let
 
         return gen_let
 
     def generate_vowel(self, is_upper):
         if is_upper:  # letter is upper case
-            return random.choice(self.vowels).upper()  # return a basic uppercase vowel
+            return random.choice(VOWELS).upper()  # return a basic uppercase vowel
 
         # letter is lower case
-        gen_let = random.choice(self.vowels)
-        if gen_let in self.double_letters and self.chance('d'):  # potentially create a double letter
+        gen_let = random.choice(VOWELS)
+        if gen_let in DOUBLE_LETTERS and self.chance('d'):  # potentially create a double letter
             gen_let = gen_let + gen_let
 
         return gen_let
@@ -69,7 +70,7 @@ class Generator:
         elif let.lower() == 'v':  # we need to generate a vowel
             return self.generate_vowel(let.isupper())
         elif let == '*':  # we need any letter
-            return random.choice(self.consonants + self.rare_consonants + self.vowels)
+            return random.choice(CONSONANTS + RARE_CONSONANTS + VOWELS)
         else:
             return let  # it is not a generated letter and we send it back literally
 

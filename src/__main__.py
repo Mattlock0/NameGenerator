@@ -1,24 +1,31 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
-from .generation import Generator
-from .generation import parse_template
-from .config import Config
-from .shading import DARKMODE
-from .shading import LIGHTMODE
-from .popup import SettingsUI
+# system imports
 import logging as log
 import sys
 
+# qt imports
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
+
+# project imports
+from src.generation import Generator
+from src.generation import parse_template
+from src.config import Config
+from src.shading import DARKMODE
+from src.shading import LIGHTMODE
+from src.popup import SettingsUI
+
+# project consts
+BUILD_CONFIG_PATH = 'settings.ini'
+RUN_CONFIG_PATH = 'data/settings.ini'
+CONFIG_PATH = RUN_CONFIG_PATH
+LOG_LEVEL = log.INFO
+VERSION = '1.1'
+
+# default consts
 NAME_FONT_SIZE = 20
 TEXT_FONT_SIZE = 15
 DEFAULT_NUM_NAMES = 7
 MAX_NAME_GEN = 40
-
-BUILD_CONFIG_PATH = 'settings.ini'
-RUN_CONFIG_PATH = 'data/settings.ini'
-CONFIG_PATH = BUILD_CONFIG_PATH
-LOG_LEVEL = log.INFO
-VERSION = '1.1'
 
 
 class GeneratorUI(object):
