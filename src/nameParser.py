@@ -1,7 +1,8 @@
 import csv
 import collections
 
-consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z']
+CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z']
+VOWELS = ['a', 'e', 'i', 'o', 'u', 'y']
 diagraphs = ['sh', 'ch', 'wh', 'ck', 'th', 'ph']  # potentially create an if statement to catch these
 
 
@@ -10,7 +11,7 @@ def name_to_template(name):
     template = ""  # blank template
 
     for letter in letters:
-        if letter.lower() in consonants:
+        if letter.lower() in CONSONANTS:
             template += 'c'
         else:
             template += 'v'
@@ -34,7 +35,7 @@ def diagraph_name_template(name):
                 flag = True  # set the flag true so we don't doubly read in the letters
                 continue
 
-        if letter.lower() in consonants:
+        if letter.lower() in CONSONANTS:
             template += 'c'
         else:
             template += 'v'

@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import QMessageBox
 
 # project imports
 from src.generation import Generator
-from src.generation import parse_template
 from src.config import Config
 from src.shading import DARKMODE
 from src.shading import LIGHTMODE
@@ -19,7 +18,7 @@ BUILD_CONFIG_PATH = 'settings.ini'
 RUN_CONFIG_PATH = 'data/settings.ini'
 CONFIG_PATH = RUN_CONFIG_PATH
 LOG_LEVEL = log.INFO
-VERSION = '1.1'
+VERSION = 'v1.2'
 
 # default consts
 NAME_FONT_SIZE = 20
@@ -177,7 +176,7 @@ class GeneratorUI(object):
 
         log.info(f"Generating {self.num_sel.value()} names")
         for _ in range(self.num_sel.value()):
-            generated_names.append(parse_template(self.gen, template))  # sends in chosen template
+            generated_names.append(self.gen.parse_template(template))  # sends in chosen template
 
         new_name_list = ""
         for name in generated_names:

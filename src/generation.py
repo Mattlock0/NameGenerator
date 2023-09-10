@@ -1,85 +1,88 @@
+from src.iterator import Iterator
+from enum import IntEnum
 import random
 
+LITERAL_SYMBOLS = ['\\', '/', '|', '$', '@']
+CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'r', 's', 't', 'v', 'w']
+RARE_CONSONANTS = {'p': 252, 'z': 191, 'x': 71, 'q': 61, 'y': 35}
+DIAGRAPHS = {'sh': 275, 'th': 219, 'ch': 185, 'ck': 77, 'ph': 71, 'qu': 58, 'ng': 58}
+DOUBLE_CONSONANTS = {'ll': 398, 'nn': 310, 'tt': 199, 'rr': 157, 'ss': 126, 'mm': 44, 'dd': 31, 'ff': 29, 'bb': 27}
 VOWELS = ['a', 'e', 'i', 'o', 'u', 'y']
-CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w']
-RARE_CONSONANTS = ['j', 'q', 'x', 'z']
-DOUBLE_LETTERS = ['e', 'l', 'n', 'o', 's', 't']  # maybe r's?
-DIAGRAPH_LETTERS = ['c', 's', 't', 'w', 'q']  # maybe ck and ph?
+DOUBLE_VOWELS = {'ee': 152, 'oo': 28, 'aa': 15}
+
+ALL_SYMBOLS = [CONSONANTS, RARE_CONSONANTS, DIAGRAPHS, DOUBLE_CONSONANTS, VOWELS, DOUBLE_VOWELS]
+
+
+class Symbols(IntEnum):
+    CONSONANT = 0
+    RARE_CONSONANT = 1
+    DIAGRAPH = 2
+    DOUBLE_CONSONANT = 3
+    VOWEL = 4
+    DOUBLE_VOWEL = 5
 
 
 class Generator:
     def __init__(self):
-        self.literal_flag = False
-
         # chance defaults, overloaded by read_config
-        self.rare_chance = 8
-        self.double_chance = 13
+        self.rare_chance = 7
+        self.double_chance = 5
         self.qu_chance = 7
-        self.diagraph_chance = 15
+        self.diagraph_chance = 10
 
-    def chance(self, gen: str) -> bool:
-        if gen == 'r':
-            return True if random.randrange(100) < self.rare_chance else False
-        elif gen == 'd':
-            return True if random.randrange(100) < self.double_chance else False
-        elif gen == 'q':
-            return True if random.randrange(100) < self.qu_chance else False
-        elif gen == 'g':
-            return True if random.randrange(100) < self.diagraph_chance else False
+    def generate_consonant(self) -> str:
+        # set up basic consonant chance based on other chances
+        consonant_chance = 100 - self.rare_chance - self.double_chance - self.diagraph_chance
 
-    def generate_consonant(self, is_upper: bool) -> str:
-        if is_upper:  # letter is upper case
-            gen_let = random.choice(CONSONANTS).upper()  # generate a basic uppercase consonant
-            gen_let = random.choice(RARE_CONSONANTS).upper() if self.chance('r') else gen_let  # rare chance
-            if gen_let.lower() in DIAGRAPH_LETTERS and self.chance('g'):  # check for diagraph if possible
-                gen_let = gen_let + 'u' if gen_let == 'Q' else gen_let + 'h'  # add the appropriate letter on
+        # choose one generation type based on weights
+        type_to_generate = random_choice({Symbols.CONSONANT: consonant_chance, Symbols.RARE_CONSONANT: self.rare_chance,
+                                          Symbols.DIAGRAPH: self.diagraph_chance,
+                                          Symbols.DOUBLE_CONSONANT: self.double_chance})
 
-            return gen_let  # finally, return the letter
+        # generate a consonant of that type
+        return random_choice(ALL_SYMBOLS[type_to_generate])
 
-        # letter is lower case
-        gen_let = random.choice(CONSONANTS)
-        gen_let = random.choice(RARE_CONSONANTS) if self.chance('r') else gen_let
-        if gen_let in DIAGRAPH_LETTERS and self.chance('g'):
-            gen_let = gen_let + 'u' if gen_let == 'q' else gen_let + 'h'
-        elif gen_let in DOUBLE_LETTERS and self.chance('d'):  # potentially create double letter
-            gen_let = gen_let + gen_let
+    def generate_vowel(self) -> str:
+        # set up basic vowel chance based on double chance
+        vowel_chance = 100 - self.double_chance
 
-        return gen_let
+        # choose one generation type based on weights
+        type_to_generate = random_choice({Symbols.VOWEL: vowel_chance, Symbols.DOUBLE_VOWEL: self.double_chance})
 
-    def generate_vowel(self, is_upper):
-        if is_upper:  # letter is upper case
-            return random.choice(VOWELS).upper()  # return a basic uppercase vowel
+        # generate a vowel of that type
+        return random_choice(ALL_SYMBOLS[type_to_generate])
 
-        # letter is lower case
-        gen_let = random.choice(VOWELS)
-        if gen_let in DOUBLE_LETTERS and self.chance('d'):  # potentially create a double letter
-            gen_let = gen_let + gen_let
+    def generate_letter(self, template: Iterator) -> str:
+        # check for literal symbol
+        if template.curr() in LITERAL_SYMBOLS:
+            # if one was passed in, return whatever the next symbol is (c, v)
+            if template.has_next():
+                template.next()
+                return template.next()
+            else:
+                return template.curr()
 
-        return gen_let
+        template_letter = template.next()
+        if template_letter.lower() == 'c':
+            generated_symbol = self.generate_consonant()
+        elif template_letter.lower() == 'v':
+            generated_symbol = self.generate_vowel()
+        elif template_letter == '*':
+            generated_symbol = random.choice([self.generate_vowel(), self.generate_consonant()])
+        else:  # no template letter was passed in; generate nothing
+            generated_symbol = template_letter
 
-    def generate_letter(self, let):
-        if let == "\\" or let == "/":  # check for literal slashes
-            literal_flag = True  # if so, set the flag to True
-            return ""
-        elif self.literal_flag:  # we just read in a slash
-            literal_flag = False
-            return let  # return the letter literally
-
-        if let.lower() == 'c':  # we need to generate a consonant
-            return self.generate_consonant(let.isupper())
-        elif let.lower() == 'v':  # we need to generate a vowel
-            return self.generate_vowel(let.isupper())
-        elif let == '*':  # we need any letter
-            return random.choice(CONSONANTS + RARE_CONSONANTS + VOWELS)
+        if template_letter.isupper():
+            return generated_symbol.title()
         else:
-            return let  # it is not a generated letter and we send it back literally
+            return generated_symbol
 
-    def parse_template(self, template: str):
-        letters = ([*template])  # parse the template into a list of its letters
+    def parse_template(self, template_raw: str):
+        template = Iterator([*template_raw])
         name = ""
 
-        for letter in letters:
-            name += self.generate_letter(letter)
+        while template.has_next():
+            name += self.generate_letter(template)
 
         return name  # would pass in name to process_name here
 
@@ -87,7 +90,7 @@ class Generator:
         processed_name = ""
         # check for strange letter combinations here (qu must go together, Lr is odd)
         if "q" in name and "qu" not in name:
-            if self.chance('q'):  # currently a 7% chance
+            if random.randrange(100) < self.qu_chance:
                 processed_name = name.replace("q", "qu")
             else:
                 processed_name = name.replace("q", self.generate_letter('v'))
@@ -95,3 +98,9 @@ class Generator:
                     processed_name = name.replace("q", self.generate_letter('v'))
 
         return processed_name
+
+
+def random_choice(choices):
+    if type(choices) == list:
+        return random.choice(choices)
+    return random.choices(list(choices.keys()), weights=list(choices.values()), k=1)[0]

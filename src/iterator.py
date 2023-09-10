@@ -3,6 +3,16 @@ class Iterator(object):
         self.collection = collection
         self.index = 0
 
+    def curr(self):
+        return self.collection[self.index]
+
+    def get_next(self):
+        try:
+            result = self.collection[self.index + 1]
+        except IndexError:
+            result = -1
+        return result
+
     def next(self):
         try:
             result = self.collection[self.index]
@@ -10,12 +20,6 @@ class Iterator(object):
         except IndexError:
             raise StopIteration
         return result
-
-    def copy_next(self):
-        try:
-            return self.collection[self.index+1]
-        except IndexError:
-            raise StopIteration
 
     def prev(self):
         self.index -= 1
