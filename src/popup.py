@@ -1,8 +1,7 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from .config import Config
-from .generation import Generator
+from src.generator_v2 import Generator
 from .shading import Mode
-import logging as log
 
 
 class SettingsUI(QtWidgets.QWidget):

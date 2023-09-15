@@ -7,18 +7,17 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
 # project imports
-from src.generation import Generator
+from src.generator_v2 import Generator
 from src.config import Config
-from src.shading import DARKMODE
-from src.shading import LIGHTMODE
+from src.shading import DARKMODE, LIGHTMODE
 from src.popup import SettingsUI
 
 # project consts
 BUILD_CONFIG_PATH = 'settings.ini'
 RUN_CONFIG_PATH = 'data/settings.ini'
-CONFIG_PATH = RUN_CONFIG_PATH
-LOG_LEVEL = log.INFO
-VERSION = 'v1.2'
+CONFIG_PATH = BUILD_CONFIG_PATH
+LOG_LEVEL = log.DEBUG
+VERSION = 'v1.1'
 
 # default consts
 NAME_FONT_SIZE = 20
@@ -175,8 +174,10 @@ class GeneratorUI(object):
         generated_names = []
 
         log.info(f"Generating {self.num_sel.value()} names")
+        log.debug(f"Rare Chance: {self.gen.rare_chance} | Double Chance: {self.gen.double_chance} Qu Chance: "
+                  f"{self.gen.qu_chance} | Diagraph Chance: {self.gen.diagraph_chance}")
         for _ in range(self.num_sel.value()):
-            generated_names.append(self.gen.parse_template(template))  # sends in chosen template
+            generated_names.append(self.gen.generate_name(template))  # sends in chosen template
 
         new_name_list = ""
         for name in generated_names:
