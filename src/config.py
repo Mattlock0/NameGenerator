@@ -1,9 +1,10 @@
-import configparser
+from pathlib import Path
 import logging as log
+import configparser
 
 
 class Config:
-    def __init__(self, ini_file):
+    def __init__(self, ini_file: Path):
         self.config_f = configparser.ConfigParser()
         self.config_f.read(ini_file)
         self.read_config_file = True
