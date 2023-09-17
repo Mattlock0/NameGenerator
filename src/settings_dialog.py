@@ -22,19 +22,18 @@ class SettingsDialog(QtWidgets.QDialog):
 
         self.gridLayout = QtWidgets.QGridLayout(self)
 
-        h_spacer = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        v_spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-
+        vertical_spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.verticalLayout.addItem(v_spacer)
+        self.verticalLayout.addItem(vertical_spacer)
 
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
 
+        horizontal_spacer = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.horizontalLayout.addItem(h_spacer)
+        self.horizontalLayout.addItem(horizontal_spacer)
 
         self.label_rare = QtWidgets.QLabel(self)
         self.label_rare.setObjectName("label")
@@ -45,12 +44,14 @@ class SettingsDialog(QtWidgets.QDialog):
         self.enter_rare.setObjectName("lineEdit")
         self.horizontalLayout.addWidget(self.enter_rare)
 
-        self.horizontalLayout.addItem(h_spacer)
+        horizontal_spacer_2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(horizontal_spacer_2)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
 
+        horizontal_spacer_3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.horizontalLayout_2.addItem(h_spacer)
+        self.horizontalLayout_2.addItem(horizontal_spacer_3)
 
         self.label_double = QtWidgets.QLabel(self)
         self.label_double.setObjectName("label_2")
@@ -61,12 +62,14 @@ class SettingsDialog(QtWidgets.QDialog):
         self.enter_double.setObjectName("lineEdit_2")
         self.horizontalLayout_2.addWidget(self.enter_double)
 
-        self.horizontalLayout_2.addItem(h_spacer)
+        horizontal_spacer_4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(horizontal_spacer_4)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
+        horizontal_spacer_5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.horizontalLayout_3.addItem(h_spacer)
+        self.horizontalLayout_3.addItem(horizontal_spacer_5)
 
         self.label_qu = QtWidgets.QLabel(self)
         self.label_qu.setObjectName("label_3")
@@ -77,12 +80,14 @@ class SettingsDialog(QtWidgets.QDialog):
         self.enter_qu.setObjectName("lineEdit_3")
         self.horizontalLayout_3.addWidget(self.enter_qu)
 
-        self.horizontalLayout_3.addItem(h_spacer)
+        horizontal_spacer_6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(horizontal_spacer_6)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
+        horizontal_spacer_7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.horizontalLayout_4.addItem(h_spacer)
+        self.horizontalLayout_4.addItem(horizontal_spacer_7)
 
         self.label_diagraph = QtWidgets.QLabel(self)
         self.label_diagraph.setObjectName("label_4")
@@ -93,23 +98,27 @@ class SettingsDialog(QtWidgets.QDialog):
         self.enter_diagraph.setObjectName("lineEdit_4")
         self.horizontalLayout_4.addWidget(self.enter_diagraph)
 
-        self.horizontalLayout_4.addItem(h_spacer)
+        horizontal_spacer_8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(horizontal_spacer_8)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
 
+        horizontal_spacer_9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.horizontalLayout_5.addItem(h_spacer)
+        self.horizontalLayout_5.addItem(horizontal_spacer_9)
 
         self.checkbox_popular = QtWidgets.QCheckBox(self)
         self.checkbox_popular.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.checkbox_popular.setObjectName("checkBox")
         self.horizontalLayout_5.addWidget(self.checkbox_popular)
 
-        self.horizontalLayout_5.addItem(h_spacer)
+        horizontal_spacer_10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(horizontal_spacer_10)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
 
+        vertical_spacer_2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addLayout(self.verticalLayout_2)
-        self.verticalLayout.addItem(v_spacer)
+        self.verticalLayout.addItem(vertical_spacer_2)
 
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
@@ -129,13 +138,13 @@ class SettingsDialog(QtWidgets.QDialog):
         self.verticalLayout.addLayout(self.horizontalLayout_6)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
 
-
         self.set_shading(shading)
 
         self.retranslate_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslate_ui(self):
+        log.debug(f"Entered: {self.retranslate_ui.__name__}")
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("SettingsDialog", "Settings"))
         self.label_rare.setText(_translate("SettingsDialog", "Rare Consonant Chance (%)"))
@@ -151,6 +160,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self.button_cancel.setText(_translate("SettingsDialog", "Cancel"))
 
     def set_shading(self, shading):
+        log.debug(f"Entered: {self.set_shading.__name__}")
         inset_border = (
             f"border-bottom: 1px solid {shading.light_border}; border-right: 1px solid {shading.light_border}; "
             f"border-left: 2px solid {shading.border}; border-top: 2px solid {shading.border}\n")

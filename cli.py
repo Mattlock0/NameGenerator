@@ -10,7 +10,7 @@ import logging as log
 # PROJECT CONSTANTS
 BUILD_CONFIG_PATH = 'settings.ini'
 RUN_CONFIG_PATH = 'data/settings.ini'
-CONFIG_PATH = Path(RUN_CONFIG_PATH)
+CONFIG_PATH = Path(BUILD_CONFIG_PATH)
 LOG_LEVEL = log.DEBUG
 VERSION = 'v1.1'
 

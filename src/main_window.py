@@ -198,12 +198,9 @@ class MainWindow(object):
             return msg.exec_()
 
         log.info("Settings chosen...")
-
         settings_dialog = SettingsDialog(self.gen)
         settings_dialog.setup_ui(self.get_shading(True)[0])
-        log.error("Here?")
-        ret = settings_dialog.exec_()
-        print(ret)
+        settings_dialog.exec_()
 
     def set_shading(self, window: QtWidgets.QMainWindow):
         ret = self.get_shading()
