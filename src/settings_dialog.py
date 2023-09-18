@@ -1,6 +1,5 @@
 # system imports
 import logging as log
-import sys
 
 # qt imports
 from PyQt5 import QtCore, QtWidgets
@@ -16,7 +15,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self.gen = gen
 
     def setup_ui(self, shading: Mode):
-        log.debug(f"Entered: {self.setup_ui.__name__}")
+        log.trace(f"Entered: SettingsDialog.{self.setup_ui.__name__}")
         self.resize(500, 500)
         self.setModal(True)
 
@@ -144,7 +143,7 @@ class SettingsDialog(QtWidgets.QDialog):
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslate_ui(self):
-        log.debug(f"Entered: {self.retranslate_ui.__name__}")
+        log.trace(f"Entered: SettingsDialog.{self.retranslate_ui.__name__}")
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("SettingsDialog", "Settings"))
         self.label_rare.setText(_translate("SettingsDialog", "Rare Consonant Chance (%)"))
@@ -160,7 +159,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self.button_cancel.setText(_translate("SettingsDialog", "Cancel"))
 
     def set_shading(self, shading):
-        log.debug(f"Entered: {self.set_shading.__name__}")
+        log.trace(f"Entered: SettingsDialog.{self.set_shading.__name__}")
         inset_border = (
             f"border-bottom: 1px solid {shading.light_border}; border-right: 1px solid {shading.light_border}; "
             f"border-left: 2px solid {shading.border}; border-top: 2px solid {shading.border}\n")
@@ -210,7 +209,7 @@ class SettingsDialog(QtWidgets.QDialog):
                            "}")
 
     def pressed_save(self):
-        log.debug(f"Entered: {self.pressed_save.__name__}")
+        log.trace(f"Entered: SettingsDialog.{self.pressed_save.__name__}")
         rare_chance = int(self.enter_rare.text())
         double_chance = int(self.enter_double.text())
         qu_chance = int(self.enter_qu.text())
@@ -224,5 +223,5 @@ class SettingsDialog(QtWidgets.QDialog):
         self.done(0)
 
     def pressed_cancel(self):
-        log.debug(f"Entered: {self.pressed_cancel.__name__}")
+        log.trace(f"Entered: SettingsDialog.{self.pressed_cancel.__name__}")
         self.done(1)

@@ -38,6 +38,7 @@ class MainWindow(object):
         self.version = version
 
     def setup_ui(self, main_window: QtWidgets.QMainWindow):
+        log.trace(f"Entered: MainWindow.{self.setup_ui.__name__}")
         log.debug("Setting up UI...")
         main_window.setObjectName("main_window")
         main_window.resize(800, 600)
@@ -135,6 +136,7 @@ class MainWindow(object):
         main_window.setTabOrder(self.num_sel, self.template_enter)
 
     def retranslate_ui(self, main_window):
+        log.trace(f"Entered: MainWindow.{self.retranslate_ui.__name__}")
         _translate = QtCore.QCoreApplication.translate
         main_window.setWindowTitle(_translate("main_window", "main_window"))
         self.generate_button.setText(_translate("main_window", "Generate Names"))
@@ -149,6 +151,7 @@ class MainWindow(object):
         self.action_about.setText(_translate("main_window", "About"))
 
     def get_font(self, pt_size):
+        log.trace(f"Entered: MainWindow.{self.get_font.__name__}")
         font = QtGui.QFont()
         font.setFamily("Segoe UI Black")
         font.setPointSize(pt_size)
@@ -156,53 +159,15 @@ class MainWindow(object):
 
         return font
 
-    def enable_enter(self):
-        choice = self.template_select.currentText()
-
-        if choice == "Custom":
-            self.template_enter.show()
-            log.debug("Template bar enabled")
-        else:
-            self.template_enter.hide()
-
-    def generate_names(self):
-        template = self.template_select.currentText()
-        if template == "Custom":
-            template = self.template_enter.text()
-        generated_names = []
-
-        # log.debug(f"Generating {self.num_sel.value()} names")
-        log.debug(f"Generating... Rare Chance: {self.gen.rare_chance} Double Chance: {self.gen.double_chance} Qu Chance:"
-                  f" {self.gen.qu_chance} Diagraph Chance: {self.gen.diagraph_chance}")
-        for _ in range(self.num_sel.value()):
-            generated_names.append(self.gen.generate_name(template))  # sends in chosen template
-
-        new_name_list = ""
-        for name in generated_names:
-            new_name_list += "\n" + name
-
-        self.names_list.setText(new_name_list)
-
     def get_shading(self, just_mode=False):
+        log.trace(f"Entered: MainWindow.{self.get_shading.__name__}")
         if self.action_shading_mode.text() == "Light Mode":
             return DARKMODE if just_mode else LIGHTMODE, "Dark Mode"
         else:
             return LIGHTMODE if just_mode else DARKMODE, "Light Mode"
 
-    def settings(self):
-        if not self.config.read_config_file:
-            msg = QMessageBox()
-            msg.setWindowTitle("ERROR")
-            msg.setText("Settings file not found!")
-            msg.setIcon(QMessageBox.Critical)
-            return msg.exec_()
-
-        log.info("Settings chosen...")
-        settings_dialog = SettingsDialog(self.gen)
-        settings_dialog.setup_ui(self.get_shading(True)[0])
-        settings_dialog.exec_()
-
     def set_shading(self, window: QtWidgets.QMainWindow):
+        log.trace(f"Entered: MainWindow.{self.set_shading.__name__}")
         ret = self.get_shading()
         self.action_shading_mode.setText(ret[1])
         mode = ret[0]
@@ -252,7 +217,51 @@ class MainWindow(object):
         self.menuMenu.setStyleSheet(f"QMenu:item {{ background-color: {mode.background} }}\n"
                                     f"QMenu:item:selected {{ background-color: {mode.hover} }}")
 
+    def enable_enter(self):
+        log.trace(f"Entered: MainWindow.{self.enable_enter.__name__}")
+        choice = self.template_select.currentText()
+
+        if choice == "Custom":
+            self.template_enter.show()
+            log.debug("Template bar enabled")
+        else:
+            self.template_enter.hide()
+
+    def generate_names(self):
+        log.trace(f"Entered: MainWindow.{self.generate_names.__name__}")
+        template = self.template_select.currentText()
+        if template == "Custom":
+            template = self.template_enter.text()
+        generated_names = []
+
+        # log.debug(f"Generating {self.num_sel.value()} names")
+        log.debug(f"Generating... Rare Chance: {self.gen.rare_chance} Double Chance: {self.gen.double_chance} Qu Chance:"
+                  f" {self.gen.qu_chance} Diagraph Chance: {self.gen.diagraph_chance}")
+        for _ in range(self.num_sel.value()):
+            generated_names.append(self.gen.generate_name(template))  # sends in chosen template
+
+        new_name_list = ""
+        for name in generated_names:
+            new_name_list += "\n" + name
+
+        self.names_list.setText(new_name_list)
+
+    def settings(self):
+        log.trace(f"Entered: MainWindow.{self.settings.__name__}")
+        if not self.config.read_config_file:
+            msg = QMessageBox()
+            msg.setWindowTitle("ERROR")
+            msg.setText("Settings file not found!")
+            msg.setIcon(QMessageBox.Critical)
+            return msg.exec_()
+
+        log.info("Settings chosen...")
+        settings_dialog = SettingsDialog(self.gen)
+        settings_dialog.setup_ui(self.get_shading(True)[0])
+        settings_dialog.exec_()
+
     def about_page(self):
+        log.trace(f"Entered: MainWindow.{self.get_shading.__name__}")
         about = QMessageBox()
         about.setWindowTitle("About")
         about.setText(f"Name Generator Version: {self.version}")

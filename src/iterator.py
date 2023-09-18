@@ -32,5 +32,10 @@ class Iterator(object):
             return True
         return False
 
+    def has_prev(self):
+        if self.index - 1 >= 0:
+            return True
+        return False
+
     def __iter__(self):
         return self

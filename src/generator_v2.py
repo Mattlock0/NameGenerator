@@ -1,6 +1,11 @@
-from src.iterator import Iterator
+# system imports
 from enum import IntEnum
+import logging as log
 import random
+
+# project imports
+from src.utils import random_choice
+from src.iterator import Iterator
 
 LITERAL_SYMBOLS = ['\\', '/', '|', '$', '@']
 CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'r', 's', 't', 'v', 'w']
@@ -31,6 +36,7 @@ class Generator:
         self.diagraph_chance = 15
 
     def generate_consonant(self) -> str:
+        log.trace(f"Entered: Generator.{self.generate_consonant.__name__}")
         # set up basic consonant chance based on other chances
         consonant_chance = 100 - self.rare_chance - self.double_chance - self.diagraph_chance
 
@@ -43,6 +49,7 @@ class Generator:
         return random_choice(ALL_SYMBOLS[type_to_generate])
 
     def generate_vowel(self) -> str:
+        log.trace(f"Entered: Generator.{self.generate_vowel.__name__}")
         # set up basic vowel chance based on double chance
         vowel_chance = 100 - self.double_chance
 
@@ -53,6 +60,7 @@ class Generator:
         return random_choice(ALL_SYMBOLS[type_to_generate])
 
     def generate_letter(self, template: Iterator) -> str:
+        log.trace(f"Entered: Generator.{self.generate_letter.__name__}")
         # check for literal symbol
         if template.curr() in LITERAL_SYMBOLS:
             # if one was passed in, return whatever the next symbol is (c, v)
@@ -78,6 +86,7 @@ class Generator:
             return generated_symbol
 
     def generate_name(self, template_raw: str):
+        log.trace(f"Entered: Generator.{self.generate_name.__name__}")
         template = Iterator([*template_raw])
         name = ""
 
@@ -87,6 +96,7 @@ class Generator:
         return name  # would pass in name to process_name here
 
     def process_name(self, name):
+        log.trace(f"Entered: Generator.{self.process_name.__name__}")
         processed_name = ""
         # check for strange letter combinations here (qu must go together, Lr is odd)
         if "q" in name and "qu" not in name:
@@ -98,9 +108,3 @@ class Generator:
                     processed_name = name.replace("q", self.generate_letter('v'))
 
         return processed_name
-
-
-def random_choice(choices):
-    if type(choices) == list:
-        return random.choice(choices)
-    return random.choices(list(choices.keys()), weights=list(choices.values()), k=1)[0]

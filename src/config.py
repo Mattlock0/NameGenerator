@@ -10,6 +10,7 @@ class Config:
         self.read_config_file = True
 
     def read_config(self, gen) -> bool:
+        log.trace(f"Entered: Config.{self.read_config.__name__}")
         sec1 = 'letterGeneration'
 
         try:  # have to store the failure in case the settings file was misplaced
@@ -25,18 +26,23 @@ class Config:
         return True
 
     def read(self, section, key):
+        log.trace(f"Entered: Config.{self.read.__name__}")
         return self.config_f[section][key]
 
     def read_bool(self, section, key):
+        log.trace(f"Entered: Config.{self.read_bool.__name__}")
         return self.config_f.getboolean(section, key)
 
     def read_int(self, section, key):
+        log.trace(f"Entered: Config.{self.read_int.__name__}")
         return self.config_f.getint(section, key)
 
     def read_list(self, section, key):
+        log.trace(f"Entered: Config.{self.read_list.__name__}")
         return self.config_f.get(section, key).split(',')
 
     def print_config(self):
+        log.trace(f"Entered: Config.{self.print_config.__name__}")
         for section_name in self.config_f.sections():
             print('Section: ', section_name)
             print('\tOptions: ', self.config_f.options(section_name))
@@ -46,6 +52,7 @@ class Config:
         # full example, separate per section
 
     def get_templates(self) -> list:
+        log.trace(f"Entered: Config.{self.get_templates.__name__}")
         if self.read_bool('general', 'printAllTemplates'):
             return self.read_list('nameGeneration', 'allTemplates')
         else:
