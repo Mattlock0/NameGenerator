@@ -148,6 +148,12 @@ class SettingsDialog(QtWidgets.QDialog):
         self.button_save.setObjectName("button_save")
         self.horizontalLayout_7.addWidget(self.button_save)
 
+        self.button_save_to_file = QtWidgets.QPushButton(self)
+        self.button_save_to_file.setMinimumSize(QtCore.QSize(0, 35))
+        self.button_save_to_file.clicked.connect(self.pressed_save_to_file)
+        self.button_save_to_file.setObjectName("button_save_to_file")
+        self.horizontalLayout_7.addWidget(self.button_save_to_file)
+
         self.button_cancel = QtWidgets.QPushButton(self)
         self.button_cancel.setMinimumSize(QtCore.QSize(0, 35))
         self.button_cancel.clicked.connect(self.pressed_cancel)
@@ -178,6 +184,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self.enter_xs.setText(_translate("SettingsDialog", str(self.gen.xs_chance)))
         self.checkbox_popular.setText(_translate("SettingsDialog", "Show only popular templates?"))
         self.button_save.setText(_translate("SettingsDialog", "Save"))
+        self.button_save_to_file.setText(_translate("SettingsDialog", "Save (to file)"))
         self.button_cancel.setText(_translate("SettingsDialog", "Cancel"))
 
     def set_shading(self, shading):
@@ -232,6 +239,18 @@ class SettingsDialog(QtWidgets.QDialog):
 
     def pressed_save(self):
         log.trace(f"Entered: SettingsDialog.{self.pressed_save.__name__}")
+
+        # update generator chances
+        self.gen.rare_chance = int(self.enter_rare.text())
+        self.gen.diagraph_chance = int(self.enter_diagraph.text())
+        self.gen.double_chance = int(self.enter_double.text())
+        self.gen.qu_chance = int(self.enter_qu.text())
+        self.gen.xs_chance = int(self.enter_xs.text())
+
+        self.done(0)
+
+    def pressed_save_to_file(self):
+        log.trace(f"Entered: SettingsDialog.{self.pressed_save_to_file.__name__}")
 
         # update generator chances
         self.gen.rare_chance = int(self.enter_rare.text())
