@@ -22,16 +22,8 @@ MAX_NAME_GEN = 40
 
 class MainWindow(object):
     def __init__(self, config_path: Path, version: str):
-        self.gen = Generator()  # setup generator
-
-        # setup config
-        self.config = Config(config_path)
-        self.config.read_config(self.gen)
-        if self.config.read_config(self.gen):
-            self.template_list = self.config.get_templates()
-        else:
-            self.template_list = ["Cvccvc", "Cvccv", "Cvcv", "Cvcvc", "Cvccvv", "Cvcvcv", "Cvcvv", "Cvcvccv", "Cvvcv",
-                                  "Vccvc", "Cvcvvc", "Cvcc", "Cvccvcv", "Crvc", "Cvcy"]
+        # initialize generator
+        self.gen = Generator(config_path)
 
         # extra class elements
         self.settings_window = QtWidgets.QMainWindow()
@@ -63,7 +55,7 @@ class MainWindow(object):
         self.template_select.setObjectName("template_select")
         self.horizontalLayout.addWidget(self.template_select)
 
-        for template in self.template_list:
+        for template in self.gen.templates:
             self.template_select.addItem(template)
         self.template_select.addItem("Custom")
 
@@ -234,9 +226,8 @@ class MainWindow(object):
             template = self.template_enter.text()
         generated_names = []
 
-        # log.debug(f"Generating {self.num_sel.value()} names")
-        log.debug(f"Generating... Rare Chance: {self.gen.rare_chance} Double Chance: {self.gen.double_chance} Qu Chance:"
-                  f" {self.gen.qu_chance} Diagraph Chance: {self.gen.diagraph_chance}")
+        log.debug(f"Generating... Rare: {self.gen.rare_chance}% | Diagraph: {self.gen.diagraph_chance}% | "
+                  f"Double: {self.gen.double_chance}% | Qu: {self.gen.qu_chance}%")
         for _ in range(self.num_sel.value()):
             generated_names.append(self.gen.generate_name(template))  # sends in chosen template
 
@@ -248,14 +239,13 @@ class MainWindow(object):
 
     def settings(self):
         log.trace(f"Entered: MainWindow.{self.settings.__name__}")
-        if not self.config.read_config_file:
+        if not self.gen.config.config_exists:
             msg = QMessageBox()
             msg.setWindowTitle("ERROR")
             msg.setText("Settings file not found!")
             msg.setIcon(QMessageBox.Critical)
             return msg.exec_()
 
-        log.info("Settings chosen...")
         settings_dialog = SettingsDialog(self.gen)
         settings_dialog.setup_ui(self.get_shading(True)[0])
         settings_dialog.exec_()
@@ -270,7 +260,6 @@ class MainWindow(object):
         about.setStandardButtons(QMessageBox.Ok)
 
         mode = DARKMODE if self.action_shading_mode.text() == "Light Mode" else LIGHTMODE
-
         about.setStyleSheet(f"background-color: {mode.background}; color: {mode.text}")
 
         x = about.exec_()

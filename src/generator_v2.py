@@ -1,10 +1,12 @@
 # system imports
 from enum import IntEnum
+from pathlib import Path
 import logging as log
 import random
 
 # project imports
 from src.utils import random_choice
+from src.config import Config
 from src.iterator import Iterator
 
 LITERAL_SYMBOLS = ['\\', '/', '|', '$', '@']
@@ -28,20 +30,28 @@ class Symbols(IntEnum):
 
 
 class Generator:
-    def __init__(self):
-        # chance defaults, overloaded by read_config
-        self.rare_chance = 7
-        self.double_chance = 5
-        self.qu_chance = 7
-        self.diagraph_chance = 15
+    def __init__(self, config_path: Path):
+        self.config = Config(config_path)
+        if self.config.config_exists:
+            self.templates = self.config.templates()
+        else:
+            self.config.create_default_config()
+            self.templates = ['Cvccvc', 'Cvccv', 'Cvcv', 'Cvcvc', 'Cvccvv']
+
+        self.rare_chance = self.config.getint('generationChances', 'rare')
+        self.diagraph_chance = self.config.getint('generationChances', 'diagraph')
+        self.double_chance = self.config.getint('generationChances', 'double')
+        self.qu_chance = self.config.getint('replaceChances', 'qu')
+        self.xs_chance = self.config.getint('replaceChances', 'xs')
 
     def generate_consonant(self) -> str:
         log.trace(f"Entered: Generator.{self.generate_consonant.__name__}")
         # set up basic consonant chance based on other chances
-        consonant_chance = 100 - self.rare_chance - self.double_chance - self.diagraph_chance
+        consonant_chance = 100 - self.rare_chance - self.diagraph_chance - self.double_chance
 
         # choose one generation type based on weights
-        type_to_generate = random_choice({Symbols.CONSONANT: consonant_chance, Symbols.RARE_CONSONANT: self.rare_chance,
+        type_to_generate = random_choice({Symbols.CONSONANT: consonant_chance,
+                                          Symbols.RARE_CONSONANT: self.rare_chance,
                                           Symbols.DIAGRAPH: self.diagraph_chance,
                                           Symbols.DOUBLE_CONSONANT: self.double_chance})
 
@@ -54,7 +64,8 @@ class Generator:
         vowel_chance = 100 - self.double_chance
 
         # choose one generation type based on weights
-        type_to_generate = random_choice({Symbols.VOWEL: vowel_chance, Symbols.DOUBLE_VOWEL: self.double_chance})
+        type_to_generate = random_choice({Symbols.VOWEL: vowel_chance,
+                                          Symbols.DOUBLE_VOWEL: self.double_chance})
 
         # generate a vowel of that type
         return random_choice(ALL_SYMBOLS[type_to_generate])
@@ -108,3 +119,14 @@ class Generator:
                     processed_name = name.replace("q", self.generate_letter('v'))
 
         return processed_name
+
+    def save_config(self):
+        log.trace(f"Entered: Generator.{self.save_config.__name__}")
+        self.config.setgen('rare', self.rare_chance)
+        self.config.setgen('diagraph', self.diagraph_chance)
+        self.config.setgen('double', self.double_chance)
+        self.config.setreplace('qu', self.qu_chance)
+        self.config.setreplace('xs', self.xs_chance)
+
+        with open(self.config.path, 'w') as configfile:
+            self.config.write(configfile)

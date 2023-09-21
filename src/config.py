@@ -1,59 +1,64 @@
+# system imports
+import configparser
 from pathlib import Path
 import logging as log
-import configparser
+from configparser import SafeConfigParser
+
+DEFAULTS = {'rare': '7', 'diagraph': '15', 'double': '5'}
 
 
-class Config:
-    def __init__(self, ini_file: Path):
-        self.config_f = configparser.ConfigParser()
-        self.config_f.read(ini_file)
-        self.read_config_file = True
+class Config(SafeConfigParser):
+    def __init__(self, config_path: Path):
+        super().__init__()
+        self.path = config_path
+        self.read(config_path)
 
-    def read_config(self, gen) -> bool:
-        log.trace(f"Entered: Config.{self.read_config.__name__}")
-        sec1 = 'letterGeneration'
-
-        try:  # have to store the failure in case the settings file was misplaced
-            gen.rare_chance = self.read_int(sec1, 'rare_chance')
+        try:
+            self.getint('generationChances', 'rare')
+            self.config_exists = True
         except configparser.NoSectionError:
-            log.error("settings.ini file not found. Continuing with defaults.")
-            self.read_config_file = False
-            return False
+            log.warning("settings.ini file not found. Continuing with defaults.")
+            self.config_exists = False
 
-        gen.double_chance = self.read_int(sec1, 'double_chance')
-        gen.qu_chance = self.read_int(sec1, 'qu_chance')
-        gen.diagraph_chance = self.read_int(sec1, 'diagraph_chance')
-        return True
+    def getlist(self, section, key):
+        log.trace(f"Entered: Config.{self.getlist.__name__}")
+        return self.get(section, key).split(',')
 
-    def read(self, section, key):
-        log.trace(f"Entered: Config.{self.read.__name__}")
-        return self.config_f[section][key]
+    def setgen(self, key, value):
+        log.trace(f"Entered: Config.{self.setgen.__name__}")
+        self.set('generationChances', key, str(value))
 
-    def read_bool(self, section, key):
-        log.trace(f"Entered: Config.{self.read_bool.__name__}")
-        return self.config_f.getboolean(section, key)
+    def setreplace(self, key, value):
+        log.trace(f"Entered: Config.{self.setreplace.__name__}")
+        self.set('replaceChances', key, str(value))
 
-    def read_int(self, section, key):
-        log.trace(f"Entered: Config.{self.read_int.__name__}")
-        return self.config_f.getint(section, key)
-
-    def read_list(self, section, key):
-        log.trace(f"Entered: Config.{self.read_list.__name__}")
-        return self.config_f.get(section, key).split(',')
-
-    def print_config(self):
-        log.trace(f"Entered: Config.{self.print_config.__name__}")
-        for section_name in self.config_f.sections():
-            print('Section: ', section_name)
-            print('\tOptions: ', self.config_f.options(section_name))
-
-            for name, value in self.config_f.items(section_name):
-                print('\t%s: %s' % (name, value))
-        # full example, separate per section
-
-    def get_templates(self) -> list:
-        log.trace(f"Entered: Config.{self.get_templates.__name__}")
-        if self.read_bool('general', 'printAllTemplates'):
-            return self.read_list('nameGeneration', 'allTemplates')
+    def templates(self) -> list:
+        log.trace(f"Entered: Config.{self.templates.__name__}")
+        if self.getboolean('general', 'printAllTemplates'):
+            return self.getlist('nameGeneration', 'allTemplates')
         else:
-            return self.read_list('nameGeneration', 'popularTemplates')
+            return self.getlist('nameGeneration', 'popularTemplates')
+
+    def create_default_config(self):
+        log.trace(f"Entered: Config.{self.create_default_config.__name__}")
+        # general settings
+        section = 'general'
+        self.set(section, 'printAllTemplates', 'no')
+
+        # generationChances settings
+        section = 'generationChances'
+        self.set(section, 'rare', DEFAULTS['rare'])
+        self.set(section, 'diagraph', DEFAULTS['diagraph'])
+        self.set(section, 'double', DEFAULTS['double'])
+
+        # replaceChances settings
+        section = 'replaceChances'
+        self.set(section, 'qu', '25')
+        self.set(section, 'xs', '40')
+
+        # nameGeneration settings
+        section = 'nameGeneration'
+        self.set(section, 'popularTemplates', 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv')
+        self.set(section, 'allTemplates', 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv,Cvcvcv,Cvcvv,Cvcvccv,Cvvcv,Vccvc,'
+                                          'Cvcvvc,Cvcc,Cvccvcv,Crvc,Cvcy')
+        self.set(section, 'total_random', 'no')
