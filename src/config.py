@@ -4,7 +4,7 @@ from pathlib import Path
 import logging as log
 from configparser import SafeConfigParser
 
-DEFAULTS = {'rare': '7', 'diagraph': '15', 'double': '5'}
+DEFAULTS = {'rare': '5', 'diagraph': '15', 'double': '5'}
 
 
 class Config(SafeConfigParser):
@@ -42,23 +42,20 @@ class Config(SafeConfigParser):
     def create_default_config(self):
         log.trace(f"Entered: Config.{self.create_default_config.__name__}")
         # general settings
-        section = 'general'
-        self.set(section, 'printAllTemplates', 'no')
+        self['general'] = {'printAllTemplates': 'no',
+                           'shadingmode': 'dark'}
 
-        # generationChances settings
-        section = 'generationChances'
-        self.set(section, 'rare', DEFAULTS['rare'])
-        self.set(section, 'diagraph', DEFAULTS['diagraph'])
-        self.set(section, 'double', DEFAULTS['double'])
+        # generation chances settings
+        self['generationChances'] = {'rare': DEFAULTS['rare'],
+                                     'diagraph': DEFAULTS['diagraph'],
+                                     'double': DEFAULTS['double']}
 
-        # replaceChances settings
-        section = 'replaceChances'
-        self.set(section, 'qu', '25')
-        self.set(section, 'xs', '40')
+        # replace chances settings
+        self['replaceChances'] = {'qu': '25',
+                                  'xs': '40'}
 
-        # nameGeneration settings
-        section = 'nameGeneration'
-        self.set(section, 'popularTemplates', 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv')
-        self.set(section, 'allTemplates', 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv,Cvcvcv,Cvcvv,Cvcvccv,Cvvcv,Vccvc,'
-                                          'Cvcvvc,Cvcc,Cvccvcv,Crvc,Cvcy')
-        self.set(section, 'total_random', 'no')
+        # name generation settings
+        self['nameGeneration'] = {'popularTemplates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv',
+                                  'allTemplates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv,Cvcvcv,Cvcvv,Cvcvccv,Cvvcv,Vccvc,'
+                                                  'Cvcvvc,Cvcc,Cvccvcv,Crvc,Cvcy',
+                                  'total_random': 'no'}
