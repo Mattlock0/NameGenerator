@@ -1,13 +1,13 @@
 # system imports
-import configparser
+from configparser import SafeConfigParser
 from pathlib import Path
 import logging as log
-from configparser import SafeConfigParser
+import configparser
 
 DEFAULTS = {'rare': '5', 'diagraph': '15', 'double': '5'}
 
 
-class Config(SafeConfigParser):
+class Settings(SafeConfigParser):
     def __init__(self, config_path: Path):
         super().__init__()
         self.path = config_path
@@ -59,3 +59,7 @@ class Config(SafeConfigParser):
                                   'allTemplates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv,Cvcvcv,Cvcvv,Cvcvccv,Cvvcv,Vccvc,'
                                                   'Cvcvvc,Cvcc,Cvccvcv,Crvc,Cvcy',
                                   'total_random': 'no'}
+
+    def save_config(self):
+        log.trace(f"Entered: Config.{self.save_config.__name__}")
+        log.info(f"Saving settings to file...")

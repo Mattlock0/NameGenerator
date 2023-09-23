@@ -8,9 +8,11 @@ from PyQt5.QtWidgets import QMessageBox
 
 # project imports
 from src.settings_dialog import SettingsDialog
+from src.tuning_dialog import TuningDialog
 from src.utils import DARKMODE, LIGHTMODE
 from src.generator_v2 import Generator
 from src.utils import style_button
+from src.settings import Settings
 from src.utils import get_border
 from src.utils import get_font
 from src.utils import Border
@@ -27,6 +29,10 @@ class MainWindow(object):
     def __init__(self, config_path: Path, version: str):
         # initialize generator
         self.gen = Generator(config_path)
+
+        # initialize settings
+        self.settings = Settings(config_path)
+        self.templates = ['Cvccvc', 'Cvccv', 'Cvcv', 'Cvcvc', 'Cvccvv']
 
         # initialize shading mode
         self.mode = DARKMODE
@@ -61,7 +67,7 @@ class MainWindow(object):
         self.template_select.setObjectName("template_select")
         self.horizontalLayout.addWidget(self.template_select)
 
-        for template in self.gen.templates:
+        for template in self.templates:
             self.template_select.addItem(template)
         self.template_select.addItem("Custom")
 
@@ -112,9 +118,14 @@ class MainWindow(object):
         main_window.setMenuBar(self.menuBar)
 
         self.action_settings = QtWidgets.QAction(main_window)
-        self.action_settings.triggered.connect(self.settings)
+        self.action_settings.triggered.connect(self.open_settings)
         self.action_settings.setObjectName("action_settings")
         self.menuMenu.addAction(self.action_settings)
+
+        self.action_tuning = QtWidgets.QAction(main_window)
+        self.action_tuning.triggered.connect(self.open_tuning)
+        self.action_tuning.setObjectName("action_tuning")
+        self.menuMenu.addAction(self.action_tuning)
 
         self.action_shading_mode = QtWidgets.QAction(main_window)
         self.action_shading_mode.triggered.connect(lambda: self.set_shading(main_window, True))
@@ -122,7 +133,7 @@ class MainWindow(object):
         self.menuMenu.addAction(self.action_shading_mode)
 
         self.action_about = QtWidgets.QAction(main_window)
-        self.action_about.triggered.connect(self.about_page)
+        self.action_about.triggered.connect(self.open_about)
         self.action_about.setObjectName("action_about")
         self.menuMenu.addAction(self.action_about)
 
@@ -138,17 +149,19 @@ class MainWindow(object):
     def retranslate_ui(self, main_window):
         log.trace(f"Entered: MainWindow.{self.retranslate_ui.__name__}")
         _translate = QtCore.QCoreApplication.translate
-        main_window.setWindowTitle(_translate("main_window", "main_window"))
-        self.generate_button.setText(_translate("main_window", "Generate Names"))
-        self.generate_button.setShortcut(_translate("main_window", "G"))
-        self.template_enter.setPlaceholderText(_translate("main_window", "Enter template... (* is wildcard)"))
-        self.names_list.setText(_translate("main_window", ""))
-        self.menuMenu.setTitle(_translate("main_window", "Menu"))
-        self.action_settings.setText(_translate("main_window", "Settings"))
-        self.action_settings.setShortcut(_translate("main_window", "Ctrl+S"))
-        self.action_shading_mode.setText(_translate("main_window", "Light Mode"))
-        self.action_shading_mode.setShortcut(_translate("main_window", "Ctrl+Shift+L"))
-        self.action_about.setText(_translate("main_window", "About"))
+        main_window.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.generate_button.setText(_translate("MainWindow", "Generate Names"))
+        self.generate_button.setShortcut(_translate("MainWindow", "G"))
+        self.template_enter.setPlaceholderText(_translate("MainWindow", "Enter template... (* is wildcard)"))
+        self.names_list.setText(_translate("MainWindow", ""))
+        self.menuMenu.setTitle(_translate("MainWindow", "Menu"))
+        self.action_settings.setText(_translate("MainWindow", "Settings"))
+        self.action_settings.setShortcut(_translate("MainWindow", "Ctrl+S"))
+        self.action_tuning.setText(_translate("MainWindow", "Tuning"))
+        self.action_tuning.setShortcut(_translate("MainWindow", "Ctrl+T"))
+        self.action_shading_mode.setText(_translate("MainWindow", "Light Mode"))
+        self.action_shading_mode.setShortcut(_translate("MainWindow", "Ctrl+Shift+L"))
+        self.action_about.setText(_translate("MainWindow", "About"))
 
     def reverse_shading(self):
         log.trace(f"Entered: MainWindow.{self.reverse_shading.__name__}")
@@ -162,7 +175,7 @@ class MainWindow(object):
     def set_shading(self, window: QtWidgets.QMainWindow, switch: bool = False):
         log.trace(f"Entered: MainWindow.{self.set_shading.__name__}")
 
-        #
+        # flip shading mode if the user clicked the button
         if switch:
             self.action_shading_mode.setText(self.reverse_shading())
 
@@ -213,15 +226,20 @@ class MainWindow(object):
 
         self.names_list.setText(new_name_list)
 
-    def settings(self):
-        log.trace(f"Entered: MainWindow.{self.settings.__name__}")
-
-        settings_dialog = SettingsDialog(self.gen, MENU_FONT_SIZE)
+    def open_settings(self):
+        log.trace(f"Entered: MainWindow.{self.open_settings.__name__}")
+        settings_dialog = SettingsDialog(self.settings, MENU_FONT_SIZE)
         settings_dialog.setup_ui(self.mode)
         settings_dialog.exec_()
 
-    def about_page(self):
-        log.trace(f"Entered: MainWindow.{self.about_page.__name__}")
+    def open_tuning(self):
+        log.trace(f"Entered: MainWindow.{self.open_tuning.__name__}")
+        tuning_dialog = TuningDialog(self.gen, MENU_FONT_SIZE - 1)
+        tuning_dialog.setup_ui(self.mode)
+        tuning_dialog.exec_()
+
+    def open_about(self):
+        log.trace(f"Entered: MainWindow.{self.open_about.__name__}")
         about = QMessageBox()
         about.setWindowTitle("About")
         about.setText(f"Name Generator Version: {self.version}")

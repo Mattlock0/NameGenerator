@@ -6,7 +6,7 @@ import random
 
 # project imports
 from src.utils import random_choice
-from src.config import Config
+from src.tuning import Tuning
 from src.iterator import Iterator
 
 LITERAL_SYMBOLS = ['\\', '/', '|', '$', '@']
@@ -31,18 +31,33 @@ class Symbols(IntEnum):
 
 class Generator:
     def __init__(self, config_path: Path):
-        self.config = Config(config_path)
-        if self.config.config_exists:
-            self.templates = self.config.templates()
-        else:
-            self.config.create_default_config()
-            self.templates = ['Cvccvc', 'Cvccv', 'Cvcv', 'Cvcvc', 'Cvccvv']
+        self.tuning = Tuning()
 
-        self.rare_chance = self.config.getint('generationChances', 'rare')
-        self.diagraph_chance = self.config.getint('generationChances', 'diagraph')
-        self.double_chance = self.config.getint('generationChances', 'double')
-        self.qu_chance = self.config.getint('replaceChances', 'qu')
-        self.xs_chance = self.config.getint('replaceChances', 'xs')
+        # chances
+        self.rare_chance, self.diagraph_chance, self.double_chance, self.common_chance, self.qu_chance, self.xs_chance \
+            = 0, 0, 0, 0, 0, 0
+
+        # enforcers
+        (self.beginning_double, self.ending_j, self.ending_v, self.ending_double, self.beginning_ending_y,
+         self.y_consonant) = False, False, False, False, False, False
+
+        self.read_tunings()
+
+    def read_tunings(self):
+        self.rare_chance = self.tuning.get_chance('rare')
+        self.diagraph_chance = self.tuning.get_chance('diagraph')
+        self.double_chance = self.tuning.get_chance('double')
+        self.common_chance = self.tuning.get_chance('common')
+        self.qu_chance = self.tuning.get_chance('qu')
+        self.xs_chance = self.tuning.get_chance('xs')
+
+        # enforcers
+        self.beginning_double = self.tuning.get_enforcer('b_double')
+        self.ending_j = self.tuning.get_enforcer('e_j')
+        self.ending_v = self.tuning.get_enforcer('e_v')
+        self.ending_double = self.tuning.get_enforcer('e_double')
+        self.beginning_ending_y = self.tuning.get_enforcer('b_e_y')
+        self.y_consonant = self.tuning.get_enforcer('y_conso')
 
     def generate_consonant(self) -> str:
         log.trace(f"Entered: Generator.{self.generate_consonant.__name__}")
@@ -119,14 +134,3 @@ class Generator:
                     processed_name = name.replace("q", self.generate_letter('v'))
 
         return processed_name
-
-    def save_config(self):
-        log.trace(f"Entered: Generator.{self.save_config.__name__}")
-        self.config.setgen('rare', self.rare_chance)
-        self.config.setgen('diagraph', self.diagraph_chance)
-        self.config.setgen('double', self.double_chance)
-        self.config.setreplace('qu', self.qu_chance)
-        self.config.setreplace('xs', self.xs_chance)
-
-        with open(self.config.path, 'w') as configfile:
-            self.config.write(configfile)
