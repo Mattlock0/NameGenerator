@@ -26,211 +26,155 @@ class SettingsDialog(QtWidgets.QDialog):
         self.setModal(True)
         self.mode = shading
 
+        # grid layout and top spacer
         self.gridLayout = QtWidgets.QGridLayout(self)
+        spacerItem = QtWidgets.QSpacerItem(20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 0, 0, 1, 1)
 
-        vertical_spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.verticalLayout.addItem(vertical_spacer)
+        # setup main layout
+        self.layout_main = QtWidgets.QVBoxLayout()
+        self.layout_main.setObjectName("layout_main")
 
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        # shading mode
+        self.layout_shading = QtWidgets.QHBoxLayout()
+        self.layout_shading.setObjectName("layout_shading")
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_shading.addItem(spacerItem4)
+        self.checkbox_lightmode = QtWidgets.QCheckBox(self)
+        self.checkbox_lightmode.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.checkbox_lightmode.setFont(get_font(self.font_size))
+        self.checkbox_lightmode.setObjectName("checkbox_lightmode")
+        self.layout_shading.addWidget(self.checkbox_lightmode)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_shading.addItem(spacerItem5)
+        self.layout_main.addLayout(self.layout_shading)
 
-        # horizontal_spacer = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout = QtWidgets.QHBoxLayout()
-        # self.horizontalLayout.setObjectName("horizontalLayout")
-        # self.horizontalLayout.addItem(horizontal_spacer)
-        #
-        # self.label_rare = QtWidgets.QLabel(self)
-        # self.label_rare.setObjectName("label_rare")
-        # self.label_rare.setFont(get_font(self.font_size))
-        # self.horizontalLayout.addWidget(self.label_rare)
-        #
-        # self.enter_rare = QtWidgets.QLineEdit(self)
-        # self.enter_rare.setMaximumSize(QtCore.QSize(50, 16777215))
-        # self.enter_rare.setObjectName("enter_rare")
-        # self.enter_rare.setFont(get_font(self.font_size))
-        # self.horizontalLayout.addWidget(self.enter_rare)
-        #
-        # horizontal_spacer_2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout.addItem(horizontal_spacer_2)
-        # self.verticalLayout_2.addLayout(self.horizontalLayout)
-        #
-        # horizontal_spacer_3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        # self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        # self.horizontalLayout_2.addItem(horizontal_spacer_3)
-        #
-        # self.label_diagraph = QtWidgets.QLabel(self)
-        # self.label_diagraph.setObjectName("label_diagraph")
-        # self.label_diagraph.setFont(get_font(self.font_size))
-        # self.horizontalLayout_2.addWidget(self.label_diagraph)
-        #
-        # self.enter_diagraph = QtWidgets.QLineEdit(self)
-        # self.enter_diagraph.setMaximumSize(QtCore.QSize(50, 16777215))
-        # self.enter_diagraph.setObjectName("enter_diagraph")
-        # self.enter_diagraph.setFont(get_font(self.font_size))
-        # self.horizontalLayout_2.addWidget(self.enter_diagraph)
-        #
-        # horizontal_spacer_4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_2.addItem(horizontal_spacer_4)
-        # self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-        #
-        # horizontal_spacer_5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        # self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        # self.horizontalLayout_3.addItem(horizontal_spacer_5)
-        #
-        # self.label_double = QtWidgets.QLabel(self)
-        # self.label_double.setObjectName("label_double")
-        # self.label_double.setFont(get_font(self.font_size))
-        # self.horizontalLayout_3.addWidget(self.label_double)
-        #
-        # self.enter_double = QtWidgets.QLineEdit(self)
-        # self.enter_double.setMaximumSize(QtCore.QSize(50, 16777215))
-        # self.enter_double.setObjectName("enter_double")
-        # self.enter_double.setFont(get_font(self.font_size))
-        # self.horizontalLayout_3.addWidget(self.enter_double)
-        #
-        # horizontal_spacer_6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_3.addItem(horizontal_spacer_6)
-        # self.verticalLayout_2.addLayout(self.horizontalLayout_3)
-        #
-        # horizontal_spacer_7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        # self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        # self.horizontalLayout_4.addItem(horizontal_spacer_7)
-        #
-        # self.label_qu = QtWidgets.QLabel(self)
-        # self.label_qu.setObjectName("label_qu")
-        # self.label_qu.setFont(get_font(self.font_size))
-        # self.horizontalLayout_4.addWidget(self.label_qu)
-        #
-        # self.enter_qu = QtWidgets.QLineEdit(self)
-        # self.enter_qu.setMaximumSize(QtCore.QSize(50, 16777215))
-        # self.enter_qu.setObjectName("enter_qu")
-        # self.enter_qu.setFont(get_font(self.font_size))
-        # self.horizontalLayout_4.addWidget(self.enter_qu)
-        #
-        # horizontal_spacer_8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_4.addItem(horizontal_spacer_8)
-        # self.verticalLayout_2.addLayout(self.horizontalLayout_4)
-        #
-        # horizontal_spacer_9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-        #                                             QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        # self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        # self.horizontalLayout_5.addItem(horizontal_spacer_9)
-        #
-        # self.label_xs = QtWidgets.QLabel(self)
-        # self.label_xs.setObjectName("label_xs")
-        # self.label_xs.setFont(get_font(self.font_size))
-        # self.horizontalLayout_5.addWidget(self.label_xs)
-        #
-        # self.enter_xs = QtWidgets.QLineEdit(self)
-        # self.enter_xs.setMaximumSize(QtCore.QSize(50, 16777215))
-        # self.enter_xs.setObjectName("enter_xs")
-        # self.enter_xs.setFont(get_font(self.font_size))
-        # self.horizontalLayout_5.addWidget(self.enter_xs)
-        #
-        # horizontal_spacer_10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-        #                                             QtWidgets.QSizePolicy.Minimum)
-        # self.horizontalLayout_5.addItem(horizontal_spacer_10)
-        # self.verticalLayout_2.addLayout(self.horizontalLayout_5)
+        # font size
+        self.layout_fontsize = QtWidgets.QHBoxLayout()
+        self.layout_fontsize.setObjectName("layout_fontsize")
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_fontsize.addItem(spacerItem2)
+        self.label_fontsize = QtWidgets.QLabel(self)
+        self.label_fontsize.setFont(get_font(self.font_size))
+        self.label_fontsize.setObjectName("label_fontsize")
+        self.layout_fontsize.addWidget(self.label_fontsize)
+        self.enter_fontsize = QtWidgets.QLineEdit(self)
+        self.enter_fontsize.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.enter_fontsize.setFont(get_font(self.font_size))
+        self.enter_fontsize.setObjectName("enter_fontsize")
+        self.layout_fontsize.addWidget(self.enter_fontsize)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_fontsize.addItem(spacerItem3)
+        self.layout_main.addLayout(self.layout_fontsize)
 
-        horizontal_spacer_11 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.horizontalLayout_6.addItem(horizontal_spacer_11)
+        # templates
+        self.layout_templates = QtWidgets.QHBoxLayout()
+        self.layout_templates.setObjectName("layout_templates")
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_templates.addItem(spacerItem7)
+        self.label_templates = QtWidgets.QLabel(self)
+        self.label_templates.setFont(get_font(self.font_size))
+        self.label_templates.setObjectName("label_templates")
+        self.layout_templates.addWidget(self.label_templates)
+        self.enter_templates = QtWidgets.QLineEdit(self)
+        # self.enter_templates.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.enter_templates.setFont(get_font(self.font_size))
+        self.enter_templates.setObjectName("enter_templates")
+        self.layout_templates.addWidget(self.enter_templates)
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_templates.addItem(spacerItem8)
+        self.layout_main.addLayout(self.layout_templates)
 
-        self.checkbox_popular = QtWidgets.QCheckBox(self)
-        self.checkbox_popular.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.checkbox_popular.setObjectName("checkbox_popular")
-        self.checkbox_popular.setFont(get_font(self.font_size))
-        self.horizontalLayout_6.addWidget(self.checkbox_popular)
+        # archive names
+        self.layout_archive = QtWidgets.QHBoxLayout()
+        self.layout_archive.setObjectName("layout_archive")
+        spacerItem9 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_archive.addItem(spacerItem9)
+        self.checkbox_archive = QtWidgets.QCheckBox(self)
+        self.checkbox_archive.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.checkbox_archive.setFont(get_font(self.font_size))
+        self.checkbox_archive.setObjectName("checkbox_archive")
+        self.layout_archive.addWidget(self.checkbox_archive)
+        spacerItem10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_archive.addItem(spacerItem10)
+        self.layout_main.addLayout(self.layout_archive)
 
-        horizontal_spacer_12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_6.addItem(horizontal_spacer_12)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_6)
+        # bottom spacer
+        self.gridLayout.addLayout(self.layout_main, 1, 0, 1, 1)
+        spacerItem6 = QtWidgets.QSpacerItem(20, 153, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem6, 2, 0, 1, 1)
 
-        vertical_spacer_2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addLayout(self.verticalLayout_2)
-        self.verticalLayout.addItem(vertical_spacer_2)
-
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-
+        # save and cancel buttons
+        self.layout_buttons = QtWidgets.QHBoxLayout()
+        self.layout_buttons.setObjectName("layout_buttons")
         self.button_save = QtWidgets.QPushButton(self)
         self.button_save.setMinimumSize(QtCore.QSize(0, 35))
-        self.button_save.clicked.connect(self.pressed_save)
-        self.button_save.setObjectName("button_save")
         self.button_save.setFont(get_font(self.font_size))
-        self.horizontalLayout_7.addWidget(self.button_save)
-
+        self.button_save.setObjectName("button_save")
+        self.button_save.clicked.connect(self.pressed_save)
+        self.layout_buttons.addWidget(self.button_save)
         self.button_cancel = QtWidgets.QPushButton(self)
         self.button_cancel.setMinimumSize(QtCore.QSize(0, 35))
-        self.button_cancel.clicked.connect(self.pressed_cancel)
-        self.button_cancel.setObjectName("button_cancel")
         self.button_cancel.setFont(get_font(self.font_size))
-        self.horizontalLayout_7.addWidget(self.button_cancel)
+        self.button_cancel.setObjectName("button_cancel")
+        self.button_cancel.clicked.connect(self.pressed_cancel)
+        self.layout_buttons.addWidget(self.button_cancel)
+        self.gridLayout.addLayout(self.layout_buttons, 3, 0, 1, 1)
 
-        self.verticalLayout.addLayout(self.horizontalLayout_7)
-        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
-
-        self.set_shading(self.mode)
-
+        self.set_shading()
         self.retranslate_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslate_ui(self):
         log.trace(f"Entered: SettingsDialog.{self.retranslate_ui.__name__}")
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("SettingsDialog", "Settings"))
-        # self.label_rare.setText(_translate("SettingsDialog", "Rare Consonant Chance (%)"))
-        # self.enter_rare.setText(_translate("SettingsDialog", str(self.gen.rare_chance)))
-        # self.label_diagraph.setText(_translate("SettingsDialog", "Diagraph Chance (%)"))
-        # self.enter_diagraph.setText(_translate("SettingsDialog", str(self.gen.diagraph_chance)))
-        # self.label_double.setText(_translate("SettingsDialog", "Double Letter Chance (%)"))
-        # self.enter_double.setText(_translate("SettingsDialog", str(self.gen.double_chance)))
-        # self.label_qu.setText(_translate("SettingsDialog", "Qu Replace (%)"))
-        # self.enter_qu.setText(_translate("SettingsDialog", str(self.gen.qu_chance)))
-        # self.label_xs.setText(_translate("SettingsDialog", "Xs Replace (%)"))
-        # self.enter_xs.setText(_translate("SettingsDialog", str(self.gen.xs_chance)))
-        self.checkbox_popular.setText(_translate("SettingsDialog", "Show only popular templates?"))
-        self.button_save.setText(_translate("SettingsDialog", "Save"))
-        self.button_cancel.setText(_translate("SettingsDialog", "Cancel"))
+        window_title = "SettingsDialog"
+        self.setWindowTitle(_translate(window_title, "Settings"))
+        self.checkbox_lightmode.setText(_translate(window_title, "Light Mode"))
+        self.label_fontsize.setText(_translate(window_title, "Font Size"))
+        self.label_templates.setText(_translate(window_title, "Templates"))
+        self.enter_templates.setText(_translate(window_title, self.settings.get('nameGeneration', 'templates')))
+        self.checkbox_archive.setText(_translate(window_title, "Archive Names"))
+        self.button_save.setText(_translate(window_title, "Save"))
+        self.button_cancel.setText(_translate(window_title, "Cancel"))
+        self.initialize_settings()
 
-    def set_shading(self, shading):
+    def set_shading(self):
         log.trace(f"Entered: SettingsDialog.{self.set_shading.__name__}")
-        inset_border = get_border(Border.INSET, shading)
+        inset_border = get_border(Border.INSET, self.mode)
 
         self.setStyleSheet("QDialog {\n"
-                           f"background-color:{shading.background}"
+                           f"background-color:{self.mode.background}"
                            "}\n"
-                           f"{style_button(shading)}"
+                           f"{style_button(self.mode)}"
                            "QCheckBox {"
-                           f"color: {shading.text}\n"
+                           f"color: {self.mode.text}\n"
                            "}\n"
                            "QLabel {\n"
-                           f"color: {shading.text};\n"
+                           f"color: {self.mode.text};\n"
                            "}\n"
                            "QLineEdit {\n"
-                           f"background-color: {shading.edit};\n"
-                           f"color: {shading.text};\n"
+                           f"background-color: {self.mode.edit};\n"
+                           f"color: {self.mode.text};\n"
                            "border-style: outset;\n"
                            f"{inset_border}"
                            "}")
+
+    def initialize_settings(self):
+        if self.settings.get('general', 'shadingmode') == 'light':
+            self.checkbox_lightmode.setChecked(True)
+        self.enter_fontsize.setText(self.settings.get('general', 'fontsize'))
 
     def pressed_save(self):
         log.trace(f"Entered: SettingsDialog.{self.pressed_save.__name__}")
 
         # save settings to a file
-        # if self.gen.config.path.is_file():
-        #     log.info("Saving settings to file...")
-        #     self.settings.save_config()
-        # else:
-        #     log.warning("Tried to save to file that did not exist!")
-        #     self.no_config_file()
+        if self.settings.path.is_file():
+            log.info("Saving settings to file...")
+            self.settings.save()
+        else:
+            log.warning("Tried to save to file that did not exist!")
+            self.no_config_file()
 
         self.done(0)
 
@@ -258,6 +202,6 @@ class SettingsDialog(QtWidgets.QDialog):
         match ret:
             case QMessageBox.Ok:
                 log.info("Generating settings file...")
-                self.settings.save_config()
+                self.settings.save()
             case QMessageBox.No:
                 log.info("User did not want settings file :(")

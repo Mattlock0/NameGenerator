@@ -13,9 +13,6 @@ class Tuning:
         self.export[GEN_SECTION] = {'rare': '5', 'diagraph': '15', 'double': '5', 'common': '0', 'qu': '25', 'xs': '40'}
         self.export[ENF_SECTION] = {'b_double': 'yes', 'e_j': 'yes', 'e_v': 'no', 'e_double': 'no', 'b_e_y': 'yes',
                                     'y_conso': 'no'}
-        # self.chances = {'rare': 5, 'diagraph': 15, 'double': 5, 'common': 0, 'qu': 25, 'xs': 40}
-        # self.enforcers = {'b_double': 'yes', 'e_j': 'yes', 'e_v': 'no', 'e_double': 'no', 'b_e_y': 'yes',
-        #                   'y_conso': 'no'}
 
     def get_chance(self, section: str):
         return self.export.getint(GEN_SECTION, section)

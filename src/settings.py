@@ -4,8 +4,6 @@ from pathlib import Path
 import logging as log
 import configparser
 
-DEFAULTS = {'rare': '5', 'diagraph': '15', 'double': '5'}
-
 
 class Settings(SafeConfigParser):
     def __init__(self, config_path: Path):
@@ -14,52 +12,31 @@ class Settings(SafeConfigParser):
         self.read(config_path)
 
         try:
-            self.getint('generationChances', 'rare')
-            self.config_exists = True
+            self.get('general', 'shadingmode')
         except configparser.NoSectionError:
             log.warning("settings.ini file not found. Continuing with defaults.")
-            self.config_exists = False
 
     def getlist(self, section, key):
         log.trace(f"Entered: Config.{self.getlist.__name__}")
         return self.get(section, key).split(',')
 
-    def setgen(self, key, value):
-        log.trace(f"Entered: Config.{self.setgen.__name__}")
-        self.set('generationChances', key, str(value))
+    def gettemplates(self) -> list:
+        log.trace(f"Entered: Config.{self.gettemplates.__name__}")
+        return self.getlist('nameGeneration', 'templates')
 
-    def setreplace(self, key, value):
-        log.trace(f"Entered: Config.{self.setreplace.__name__}")
-        self.set('replaceChances', key, str(value))
-
-    def templates(self) -> list:
-        log.trace(f"Entered: Config.{self.templates.__name__}")
-        if self.getboolean('general', 'printAllTemplates'):
-            return self.getlist('nameGeneration', 'allTemplates')
-        else:
-            return self.getlist('nameGeneration', 'popularTemplates')
-
-    def create_default_config(self):
-        log.trace(f"Entered: Config.{self.create_default_config.__name__}")
+    def create_default(self):
+        log.trace(f"Entered: Config.{self.create_default.__name__}")
         # general settings
-        self['general'] = {'printAllTemplates': 'no',
-                           'shadingmode': 'dark'}
-
-        # generation chances settings
-        self['generationChances'] = {'rare': DEFAULTS['rare'],
-                                     'diagraph': DEFAULTS['diagraph'],
-                                     'double': DEFAULTS['double']}
-
-        # replace chances settings
-        self['replaceChances'] = {'qu': '25',
-                                  'xs': '40'}
+        self['general'] = {'shadingmode': 'dark',
+                           'fontsize': '15'}
 
         # name generation settings
-        self['nameGeneration'] = {'popularTemplates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv',
-                                  'allTemplates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv,Cvcvcv,Cvcvv,Cvcvccv,Cvvcv,Vccvc,'
-                                                  'Cvcvvc,Cvcc,Cvccvcv,Crvc,Cvcy',
-                                  'total_random': 'no'}
+        self['nameGeneration'] = {'templates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv',
+                                  'archivenames': 'yes'}
 
-    def save_config(self):
-        log.trace(f"Entered: Config.{self.save_config.__name__}")
+    def save(self):
+        log.trace(f"Entered: Config.{self.save.__name__}")
         log.info(f"Saving settings to file...")
+
+        with open(self.path, 'w') as configfile:
+            self.write(configfile)

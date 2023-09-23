@@ -19,8 +19,8 @@ from src.utils import Border
 
 # defaults
 MAX_NAME_GEN = 40
-NAME_FONT_SIZE = 20
-TEXT_FONT_SIZE = NAME_FONT_SIZE - 5
+TEXT_FONT_SIZE = 15
+NAME_FONT_SIZE = TEXT_FONT_SIZE + 5
 MENU_FONT_SIZE = TEXT_FONT_SIZE - 3
 DEFAULT_NUM_NAMES = 7
 
@@ -228,7 +228,7 @@ class MainWindow(object):
 
     def open_settings(self):
         log.trace(f"Entered: MainWindow.{self.open_settings.__name__}")
-        settings_dialog = SettingsDialog(self.settings, MENU_FONT_SIZE)
+        settings_dialog = SettingsDialog(self.settings, MENU_FONT_SIZE + 1)
         settings_dialog.setup_ui(self.mode)
         settings_dialog.exec_()
 

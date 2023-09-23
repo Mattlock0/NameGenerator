@@ -360,8 +360,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.layout_buttons.addWidget(self.button_cancel)
         self.gridLayout.addLayout(self.layout_buttons, 3, 0, 1, 1)
 
-        self.set_shading(self.mode)
-
+        self.set_shading()
         self.retranslate_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -373,7 +372,6 @@ class TuningDialog(QtWidgets.QDialog):
 
         # letter generation
         self.header_letter_gen.setText(_translate(window_title, "Letter Generation"))
-        self.initialize_tunings()
         self.label_rare.setText(_translate(window_title, f"Rare Consonant Chance ({self.slider_rare.value()}%)"))
         self.label_diagraph.setText(_translate(window_title, f"Diagraph Chance ({self.slider_diagraph.value()}%)"))
         self.label_double.setText(_translate(window_title, f"Double Letter Chance ({self.slider_double.value()}%)"))
@@ -402,23 +400,26 @@ class TuningDialog(QtWidgets.QDialog):
         self.button_save.setText(_translate(window_title, "Save"))
         self.button_cancel.setText(_translate(window_title, "Cancel"))
 
-    def set_shading(self, shading):
+        # setup the variable labels
+        self.initialize_tunings()
+
+    def set_shading(self):
         log.trace(f"Entered: TuningDialog.{self.set_shading.__name__}")
-        inset_border = get_border(Border.INSET, shading)
+        inset_border = get_border(Border.INSET, self.mode)
 
         self.setStyleSheet("QDialog {\n"
-                           f"background-color:{shading.background}"
+                           f"background-color:{self.mode.background}"
                            "}\n"
-                           f"{style_button(shading)}"
+                           f"{style_button(self.mode)}"
                            "QCheckBox {"
-                           f"color: {shading.text}\n"
+                           f"color: {self.mode.text}\n"
                            "}\n"
                            "QLabel {\n"
-                           f"color: {shading.text};\n"
+                           f"color: {self.mode.text};\n"
                            "}\n"
                            "QLineEdit {\n"
-                           f"background-color: {shading.edit};\n"
-                           f"color: {shading.text};\n"
+                           f"background-color: {self.mode.edit};\n"
+                           f"color: {self.mode.text};\n"
                            "border-style: outset;\n"
                            f"{inset_border}"
                            "}")

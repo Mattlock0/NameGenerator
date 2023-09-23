@@ -28,7 +28,7 @@ def random_choice(choices):
 
 
 def get_font(pt_size):
-    log.trace(f"Entered: MainWindow.{get_font.__name__}")
+    log.trace(f"Entered: utils.{get_font.__name__}")
     font = QtGui.QFont()
     font.setFamily("Segoe UI Black")
     font.setPointSize(pt_size)
