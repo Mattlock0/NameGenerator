@@ -1,18 +1,13 @@
 # system imports
 from pathlib import Path
-import logging as log
+import math
 
 # qt imports
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
 
 # project imports
 from src.generator_v2 import Generator
-from src.utils import style_button
-from src.utils import get_border
-from src.utils import get_font
-from src.utils import Border
-from src.utils import Mode
+from src.utils import *
 
 
 class TuningDialog(QtWidgets.QDialog):
@@ -370,12 +365,26 @@ class TuningDialog(QtWidgets.QDialog):
         window_title = "Tuning"
         self.setWindowTitle(_translate(window_title, window_title))
 
+        rare_text = "Rare Consonant Chance"
+        diagraph_text = "Diagraph Chance"
+        double_text = "Double Letter Chance"
+        common_text = "Common Pairs Chance"
+        qu_text = "Qu Replace"
+        xs_text = "Xs Replace"
+
+        self.update_min(self.label_rare, rare_text)
+        self.update_min(self.label_diagraph, diagraph_text)
+        self.update_min(self.label_double, double_text)
+        self.update_min(self.label_common, common_text)
+        self.update_min(self.label_qu, qu_text)
+        self.update_min(self.label_xs, xs_text)
+
         # letter generation
         self.header_letter_gen.setText(_translate(window_title, "Letter Generation"))
-        self.label_rare.setText(_translate(window_title, f"Rare Consonant Chance ({self.slider_rare.value()}%)"))
-        self.label_diagraph.setText(_translate(window_title, f"Diagraph Chance ({self.slider_diagraph.value()}%)"))
-        self.label_double.setText(_translate(window_title, f"Double Letter Chance ({self.slider_double.value()}%)"))
-        self.label_common.setText(_translate(window_title, f"Common Pairs Chance ({self.slider_common.value()}%)"))
+        self.label_rare.setText(_translate(window_title, f"{rare_text} ({self.slider_rare.value()}%)"))
+        self.label_diagraph.setText(_translate(window_title, f"{diagraph_text} ({self.slider_diagraph.value()}%)"))
+        self.label_double.setText(_translate(window_title, f"{double_text} ({self.slider_double.value()}%)"))
+        self.label_common.setText(_translate(window_title, f"{common_text} ({self.slider_common.value()}%)"))
 
         # replacement
         self.header_replacement.setText(_translate(window_title, "Pair Replacement"))
@@ -442,6 +451,11 @@ class TuningDialog(QtWidgets.QDialog):
         self.checkbox_ending_double.setChecked(self.gen.ending_double)
         self.checkbox_beginning_ending_y.setChecked(self.gen.beginning_ending_y)
         self.checkbox_y_consonant.setChecked(self.gen.y_consonant)
+
+    def update_min(self, label: QtWidgets.QLabel, text: str):
+        max_percent = " (100%)"
+        width = len(text + max_percent) * (self.main_font_size - 2)  # this looks kind of ugly, but it works
+        label.setMinimumWidth(width)
 
     def update_percents(self):
         self.label_rare.setText(f"Rare Consonant Chance ({self.slider_rare.value()}%)")

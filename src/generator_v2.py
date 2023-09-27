@@ -1,13 +1,10 @@
 # system imports
-from enum import IntEnum
 from pathlib import Path
-import logging as log
-import random
 
 # project imports
-from src.utils import random_choice
-from src.tuning import Tuning
 from src.iterator import Iterator
+from src.tuning import Tuning
+from src.utils import *
 
 LITERAL_SYMBOLS = ['\\', '/', '|', '$', '@']
 CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'r', 's', 't', 'v', 'w']
@@ -44,6 +41,7 @@ class Generator:
         self.read_tunings()
 
     def read_tunings(self):
+        log.trace(f"Entered: Generator.{func_name()}")
         self.rare_chance = self.tuning.get_chance('rare')
         self.diagraph_chance = self.tuning.get_chance('diagraph')
         self.double_chance = self.tuning.get_chance('double')
@@ -60,7 +58,7 @@ class Generator:
         self.y_consonant = self.tuning.get_enforcer('y_conso')
 
     def generate_consonant(self) -> str:
-        log.trace(f"Entered: Generator.{self.generate_consonant.__name__}")
+        log.trace(f"Entered: Generator.{func_name()}")
         # set up basic consonant chance based on other chances
         consonant_chance = 100 - self.rare_chance - self.diagraph_chance - self.double_chance
 
@@ -74,7 +72,7 @@ class Generator:
         return random_choice(ALL_SYMBOLS[type_to_generate])
 
     def generate_vowel(self) -> str:
-        log.trace(f"Entered: Generator.{self.generate_vowel.__name__}")
+        log.trace(f"Entered: Generator.{func_name()}")
         # set up basic vowel chance based on double chance
         vowel_chance = 100 - self.double_chance
 
@@ -86,7 +84,7 @@ class Generator:
         return random_choice(ALL_SYMBOLS[type_to_generate])
 
     def generate_letter(self, template: Iterator) -> str:
-        log.trace(f"Entered: Generator.{self.generate_letter.__name__}")
+        log.trace(f"Entered: Generator.{func_name()}")
         # check for literal symbol
         if template.curr() in LITERAL_SYMBOLS:
             # if one was passed in, return whatever the next symbol is (c, v)
@@ -112,7 +110,7 @@ class Generator:
             return generated_symbol
 
     def generate_name(self, template_raw: str):
-        log.trace(f"Entered: Generator.{self.generate_name.__name__}")
+        log.trace(f"Entered: Generator.{func_name()}")
         template = Iterator([*template_raw])
         name = ""
 
@@ -122,7 +120,7 @@ class Generator:
         return name  # would pass in name to process_name here
 
     def process_name(self, name):
-        log.trace(f"Entered: Generator.{self.process_name.__name__}")
+        log.trace(f"Entered: Generator.{func_name()}")
         processed_name = ""
         # check for strange letter combinations here (qu must go together, Lr is odd)
         if "q" in name and "qu" not in name:

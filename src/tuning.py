@@ -1,5 +1,6 @@
 # system imports
 from configparser import SafeConfigParser
+from src.utils import func_name
 from pathlib import Path
 import logging as log
 
@@ -14,14 +15,14 @@ class Tuning:
         self.export[ENF_SECTION] = {'b_double': 'yes', 'e_j': 'yes', 'e_v': 'no', 'e_double': 'no', 'b_e_y': 'yes',
                                     'y_conso': 'no'}
 
-    def get_chance(self, section: str):
+    def get_chance(self, section: str) -> int:
         return self.export.getint(GEN_SECTION, section)
 
-    def get_enforcer(self, section: str):
-        return True if self.export.get(ENF_SECTION, section) == 'yes' else False
+    def get_enforcer(self, section: str) -> bool:
+        return self.export.getboolean(ENF_SECTION, section)
 
     def export_tuning(self, tuning_path: Path):
-        log.trace(f"Entered: Tuning.{self.export_tuning.__name__}")
+        log.trace(f"Entered: Tuning.{func_name()}")
         self.export[GEN_SECTION] = {
             'rare': self.export.get(GEN_SECTION, 'rare'),
             'diagraph': self.export.get(GEN_SECTION, 'diagraph'),
@@ -44,7 +45,7 @@ class Tuning:
             self.export.write(configfile)
 
     def import_tuning(self, import_path: Path):
-        log.trace(f"Entered: Tuning.{self.import_tuning.__name__}")
+        log.trace(f"Entered: Tuning.{func_name()}")
         log.info(f"Import Path: {import_path}")
         self.export.read(import_path)
         log.info(f"Common Chance: {self.get_chance('common')}")

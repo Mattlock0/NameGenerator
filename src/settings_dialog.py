@@ -1,18 +1,10 @@
-# system imports
-import logging as log
-
 # qt imports
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
 # project imports
 from src.settings import Settings
-from src.utils import style_button
-from src.utils import get_border
-from src.utils import func_name
-from src.utils import get_font
-from src.utils import Border
-from src.utils import Mode, LIGHTMODE, DARKMODE
+from src.utils import *
 
 
 class SettingsDialog(QtWidgets.QDialog):

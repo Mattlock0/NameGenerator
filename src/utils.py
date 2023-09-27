@@ -22,14 +22,14 @@ class Border(IntEnum):
 
 
 def random_choice(choices):
-    log.trace(f"Entered: utils.{random_choice.__name__}")
+    log.trace(f"Entered: utils.{func_name()}")
     if type(choices) == list:
         return random.choice(choices)
     return random.choices(list(choices.keys()), weights=list(choices.values()), k=1)[0]
 
 
 def get_font(pt_size):
-    log.trace(f"Entered: utils.{get_font.__name__}")
+    log.trace(f"Entered: utils.{func_name()}")
     font = QtGui.QFont()
     font.setFamily("Segoe UI Black")
     font.setPointSize(pt_size)
@@ -39,6 +39,7 @@ def get_font(pt_size):
 
 
 def get_border(border_type: Border, shading: Mode) -> str:
+    log.trace(f"Entered: utils.{func_name()}")
     match border_type:
         case Border.INSET:
             return (
@@ -58,6 +59,7 @@ def get_border(border_type: Border, shading: Mode) -> str:
 
 
 def style_button(shading: Mode) -> str:
+    log.trace(f"Entered: utils.{func_name()}")
     outset_border = get_border(Border.OUTSET, shading)
     hover_border = get_border(Border.HOVER, shading)
     inset_border = get_border(Border.INSET, shading)

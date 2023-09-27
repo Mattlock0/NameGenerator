@@ -11,7 +11,7 @@ from src.utils import func_name
 
 class Settings:
     def __init__(self, config_path: Path):
-        self.s = SafeConfigParser()
+        self._configparser = SafeConfigParser()
         self.path = config_path
         self.read(config_path)
 
@@ -23,22 +23,22 @@ class Settings:
 
     # overloaded config functions
     def read(self, filepath: str | Path) -> None:
-        self.s.read(filepath)
+        self._configparser.read(filepath)
 
     def write(self, file: Any) -> None:
-        self.s.write(file)
+        self._configparser.write(file)
 
     def set(self, option: str, value: str) -> None:
-        self.s.set('general', option, value)
+        self._configparser.set('general', option, value)
 
     def get(self, option: str) -> str:
-        return self.s.get('general', option)
+        return self._configparser.get('general', option)
 
     def getint(self, option: str) -> int:
-        return self.s.getint('general', option)
+        return self._configparser.getint('general', option)
 
     def getboolean(self, option: str) -> bool:
-        return self.s.getboolean('general', option)
+        return self._configparser.getboolean('general', option)
 
     # Settings-specific functions
     def getlist(self, option: str) -> list:
@@ -47,16 +47,14 @@ class Settings:
 
     def create_default(self):
         log.trace(f"Entered: Settings.{func_name()}")
-        self.s['general'] = {'lightmode': 'no',
-                             'fontsize': '15',
-                             'templates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv',
-                             'archivenames': 'yes'}
+        self._configparser['general'] = {'templates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv',
+                                         'archivenames': 'yes',
+                                         'lightmode': 'no',
+                                         'fontsize': '15'}
 
     def save(self):
         log.trace(f"Entered: Settings.{func_name()}")
         log.info(f"Saving settings to file...")
-
-        log.warning(f"Settings filepath: {self.path}")
 
         with open(self.path, 'w') as configfile:
             self.write(configfile)

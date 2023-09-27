@@ -1,6 +1,5 @@
 # system imports
 from pathlib import Path
-import logging as log
 
 # qt imports
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -11,12 +10,7 @@ from src.settings_dialog import SettingsDialog
 from src.tuning_dialog import TuningDialog
 from src.generator_v2 import Generator
 from src.settings import Settings
-from src.utils import DARKMODE, LIGHTMODE
-from src.utils import Border
-from src.utils import get_border
-from src.utils import style_button
-from src.utils import get_font
-from src.utils import func_name
+from src.utils import *
 
 # defaults
 MAX_NAME_GEN = 40
@@ -179,6 +173,7 @@ class MainWindow(object):
                                     f"QMenu:item:selected {{ background-color: {shading.hover} }}")
 
     def read_settings(self):
+        log.trace(f"Entered: MainWindow.{func_name()}")
         global TEXT_FONT_SIZE
 
         self.lightmode = self.settings.getboolean('lightmode')
