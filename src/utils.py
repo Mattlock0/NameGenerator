@@ -4,6 +4,7 @@ from enum import IntEnum
 from PyQt5 import QtGui
 import logging as log
 import random
+import inspect
 
 Mode = namedtuple('Mode', 'type background text border light_border hover edit')
 
@@ -77,6 +78,10 @@ def style_button(shading: Mode) -> str:
             "border-style: inset;\n"
             f"{inset_border}"
             "}\n")
+
+
+def func_name():
+    return inspect.currentframe().f_back.f_code.co_name
 
 
 def add_log_level(level_name, level_num, method_name=None):

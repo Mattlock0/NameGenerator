@@ -9,9 +9,10 @@ from PyQt5.QtWidgets import QMessageBox
 from src.settings import Settings
 from src.utils import style_button
 from src.utils import get_border
+from src.utils import func_name
 from src.utils import get_font
 from src.utils import Border
-from src.utils import Mode
+from src.utils import Mode, LIGHTMODE, DARKMODE
 
 
 class SettingsDialog(QtWidgets.QDialog):
@@ -19,9 +20,10 @@ class SettingsDialog(QtWidgets.QDialog):
         super().__init__()
         self.settings = settings
         self.font_size = font_size
+        self.archive = False
 
     def setup_ui(self, shading: Mode):
-        log.trace(f"Entered: SettingsDialog.{self.setup_ui.__name__}")
+        log.trace(f"Entered: SettingsDialog.{func_name()}")
         self.resize(500, 500)
         self.setModal(True)
         self.mode = shading
@@ -44,46 +46,11 @@ class SettingsDialog(QtWidgets.QDialog):
         self.checkbox_lightmode.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.checkbox_lightmode.setFont(get_font(self.font_size))
         self.checkbox_lightmode.setObjectName("checkbox_lightmode")
+        self.checkbox_lightmode.stateChanged.connect(self.update_shading)
         self.layout_shading.addWidget(self.checkbox_lightmode)
         spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.layout_shading.addItem(spacerItem5)
         self.layout_main.addLayout(self.layout_shading)
-
-        # font size
-        self.layout_fontsize = QtWidgets.QHBoxLayout()
-        self.layout_fontsize.setObjectName("layout_fontsize")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_fontsize.addItem(spacerItem2)
-        self.label_fontsize = QtWidgets.QLabel(self)
-        self.label_fontsize.setFont(get_font(self.font_size))
-        self.label_fontsize.setObjectName("label_fontsize")
-        self.layout_fontsize.addWidget(self.label_fontsize)
-        self.enter_fontsize = QtWidgets.QLineEdit(self)
-        self.enter_fontsize.setMaximumSize(QtCore.QSize(50, 16777215))
-        self.enter_fontsize.setFont(get_font(self.font_size))
-        self.enter_fontsize.setObjectName("enter_fontsize")
-        self.layout_fontsize.addWidget(self.enter_fontsize)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_fontsize.addItem(spacerItem3)
-        self.layout_main.addLayout(self.layout_fontsize)
-
-        # templates
-        self.layout_templates = QtWidgets.QHBoxLayout()
-        self.layout_templates.setObjectName("layout_templates")
-        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_templates.addItem(spacerItem7)
-        self.label_templates = QtWidgets.QLabel(self)
-        self.label_templates.setFont(get_font(self.font_size))
-        self.label_templates.setObjectName("label_templates")
-        self.layout_templates.addWidget(self.label_templates)
-        self.enter_templates = QtWidgets.QLineEdit(self)
-        # self.enter_templates.setMaximumSize(QtCore.QSize(50, 16777215))
-        self.enter_templates.setFont(get_font(self.font_size))
-        self.enter_templates.setObjectName("enter_templates")
-        self.layout_templates.addWidget(self.enter_templates)
-        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_templates.addItem(spacerItem8)
-        self.layout_main.addLayout(self.layout_templates)
 
         # archive names
         self.layout_archive = QtWidgets.QHBoxLayout()
@@ -98,6 +65,56 @@ class SettingsDialog(QtWidgets.QDialog):
         spacerItem10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.layout_archive.addItem(spacerItem10)
         self.layout_main.addLayout(self.layout_archive)
+
+        # font size
+        self.layout_fontsize = QtWidgets.QHBoxLayout()
+        self.layout_fontsize.setObjectName("layout_fontsize")
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_fontsize.addItem(spacerItem2)
+        self.label_fontsize = QtWidgets.QLabel(self)
+        self.label_fontsize.setFont(get_font(self.font_size))
+        self.label_fontsize.setObjectName("label_fontsize")
+        self.layout_fontsize.addWidget(self.label_fontsize)
+        self.enter_font_size = QtWidgets.QLineEdit(self)
+        self.enter_font_size.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.enter_font_size.setFont(get_font(self.font_size))
+        self.enter_font_size.setObjectName("enter_fontsize")
+        self.layout_fontsize.addWidget(self.enter_font_size)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_fontsize.addItem(spacerItem3)
+        self.layout_main.addLayout(self.layout_fontsize)
+
+        # templates
+        self.layout_templates = QtWidgets.QHBoxLayout()
+        self.layout_templates.setObjectName("layout_templates")
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_templates.addItem(spacerItem7)
+        self.label_templates = QtWidgets.QLabel(self)
+        self.label_templates.setFont(get_font(self.font_size))
+        self.label_templates.setObjectName("label_templates")
+        self.layout_templates.addWidget(self.label_templates)
+        self.enter_templates = QtWidgets.QLineEdit(self)
+        self.enter_templates.setMinimumWidth(130)
+        self.enter_templates.setFont(get_font(self.font_size))
+        self.enter_templates.setObjectName("enter_templates")
+        self.layout_templates.addWidget(self.enter_templates)
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_templates.addItem(spacerItem8)
+        self.layout_main.addLayout(self.layout_templates)
+
+        # default button
+        self.layout_default = QtWidgets.QHBoxLayout()
+        self.layout_default.setObjectName("layout_default")
+        spacerItem11 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_default.addItem(spacerItem11)
+        self.button_default = QtWidgets.QPushButton(self)
+        self.button_default.setMaximumSize(QtCore.QSize(600, 16777215))
+        self.button_default.setFont(get_font(self.font_size))
+        self.button_default.setObjectName("button_default")
+        self.layout_default.addWidget(self.button_default)
+        spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_default.addItem(spacerItem12)
+        self.layout_main.addLayout(self.layout_default)
 
         # bottom spacer
         self.gridLayout.addLayout(self.layout_main, 1, 0, 1, 1)
@@ -126,21 +143,21 @@ class SettingsDialog(QtWidgets.QDialog):
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslate_ui(self):
-        log.trace(f"Entered: SettingsDialog.{self.retranslate_ui.__name__}")
+        log.trace(f"Entered: SettingsDialog.{func_name()}")
         _translate = QtCore.QCoreApplication.translate
         window_title = "SettingsDialog"
         self.setWindowTitle(_translate(window_title, "Settings"))
         self.checkbox_lightmode.setText(_translate(window_title, "Light Mode"))
+        self.checkbox_archive.setText(_translate(window_title, "Archive Names"))
         self.label_fontsize.setText(_translate(window_title, "Font Size"))
         self.label_templates.setText(_translate(window_title, "Templates"))
-        self.enter_templates.setText(_translate(window_title, self.settings.get('nameGeneration', 'templates')))
-        self.checkbox_archive.setText(_translate(window_title, "Archive Names"))
+        self.button_default.setText(_translate(window_title, "Return to Default"))
         self.button_save.setText(_translate(window_title, "Save"))
         self.button_cancel.setText(_translate(window_title, "Cancel"))
         self.initialize_settings()
 
     def set_shading(self):
-        log.trace(f"Entered: SettingsDialog.{self.set_shading.__name__}")
+        log.trace(f"Entered: SettingsDialog.{func_name()}")
         inset_border = get_border(Border.INSET, self.mode)
 
         self.setStyleSheet("QDialog {\n"
@@ -160,17 +177,32 @@ class SettingsDialog(QtWidgets.QDialog):
                            f"{inset_border}"
                            "}")
 
+    def update_shading(self):
+        self.mode = LIGHTMODE if self.checkbox_lightmode.isChecked() else DARKMODE
+        self.set_shading()
+
     def initialize_settings(self):
-        if self.settings.get('general', 'shadingmode') == 'light':
-            self.checkbox_lightmode.setChecked(True)
-        self.enter_fontsize.setText(self.settings.get('general', 'fontsize'))
+        log.trace(f"Entered: SettingsDialog.{func_name()}")
+        self.checkbox_lightmode.setChecked(self.settings.getboolean('lightmode'))
+        self.checkbox_archive.setChecked(self.settings.getboolean('archivenames'))
+        self.enter_templates.setText(self.settings.get('templates'))
+        self.enter_font_size.setText(self.settings.get('fontsize'))
+
+    def check(self, checkbox: QtWidgets.QCheckBox):
+        log.trace(f"Entered: SettingsDialog.{func_name()}")
+        return 'yes' if checkbox.isChecked() else 'no'
 
     def pressed_save(self):
-        log.trace(f"Entered: SettingsDialog.{self.pressed_save.__name__}")
+        log.trace(f"Entered: SettingsDialog.{func_name()}")
+
+        self.settings.set('lightmode', self.check(self.checkbox_lightmode))
+        self.settings.set('archivenames', self.check(self.checkbox_archive))
+
+        self.settings.set('fontsize', self.enter_font_size.text())
+        self.settings.set('templates', self.enter_templates.text())
 
         # save settings to a file
         if self.settings.path.is_file():
-            log.info("Saving settings to file...")
             self.settings.save()
         else:
             log.warning("Tried to save to file that did not exist!")
@@ -179,11 +211,11 @@ class SettingsDialog(QtWidgets.QDialog):
         self.done(0)
 
     def pressed_cancel(self):
-        log.trace(f"Entered: SettingsDialog.{self.pressed_cancel.__name__}")
+        log.trace(f"Entered: SettingsDialog.{func_name()}")
         self.done(1)
 
     def no_config_file(self):
-        log.trace(f"Entered: MainWindow.{self.no_config_file.__name__}")
+        log.trace(f"Entered: MainWindow.{func_name()}")
         # show a message to the user about the missing settings file
         config_generation = QMessageBox()
         config_generation.setWindowTitle("No File Found!")
