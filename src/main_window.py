@@ -79,6 +79,7 @@ class MainWindow(object):
         self.button_generate.setFont(get_font(TEXT_FONT_SIZE))
         self.button_generate.clicked.connect(self.generate_names)
         self.button_generate.setObjectName("generate_button")
+        self.button_generate.setDefault(True)
         self.horizontalLayout.addWidget(self.button_generate)
 
         self.verticalLayout.addLayout(self.horizontalLayout)

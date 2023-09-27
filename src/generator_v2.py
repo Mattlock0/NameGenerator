@@ -60,7 +60,7 @@ class Generator:
     def generate_consonant(self) -> str:
         log.trace(f"Entered: Generator.{func_name()}")
         # set up basic consonant chance based on other chances
-        consonant_chance = 100 - self.rare_chance - self.diagraph_chance - self.double_chance
+        consonant_chance = 300 - self.rare_chance - self.diagraph_chance - self.double_chance
 
         # choose one generation type based on weights
         type_to_generate = random_choice({Symbols.CONSONANT: consonant_chance,

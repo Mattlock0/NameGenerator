@@ -346,6 +346,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.button_save.setFont(get_font(self.main_font_size))
         self.button_save.setObjectName("button_save")
         self.button_save.clicked.connect(self.pressed_save)
+        self.button_save.setDefault(True)
         self.layout_buttons.addWidget(self.button_save)
         self.button_cancel = QtWidgets.QPushButton(self)
         self.button_cancel.setMinimumSize(QtCore.QSize(0, 35))
@@ -372,12 +373,12 @@ class TuningDialog(QtWidgets.QDialog):
         qu_text = "Qu Replace"
         xs_text = "Xs Replace"
 
-        self.update_min(self.label_rare, rare_text)
-        self.update_min(self.label_diagraph, diagraph_text)
-        self.update_min(self.label_double, double_text)
-        self.update_min(self.label_common, common_text)
-        self.update_min(self.label_qu, qu_text)
-        self.update_min(self.label_xs, xs_text)
+        self.set_min(self.label_rare, rare_text)
+        self.set_min(self.label_diagraph, diagraph_text)
+        self.set_min(self.label_double, double_text)
+        self.set_min(self.label_common, common_text)
+        self.set_min(self.label_qu, qu_text)
+        self.set_min(self.label_xs, xs_text)
 
         # letter generation
         self.header_letter_gen.setText(_translate(window_title, "Letter Generation"))
@@ -452,12 +453,12 @@ class TuningDialog(QtWidgets.QDialog):
         self.checkbox_beginning_ending_y.setChecked(self.gen.beginning_ending_y)
         self.checkbox_y_consonant.setChecked(self.gen.y_consonant)
 
-    def update_min(self, label: QtWidgets.QLabel, text: str):
+    def set_min(self, label: QtWidgets.QLabel, text: str) -> None:
         max_percent = " (100%)"
         width = len(text + max_percent) * (self.main_font_size - 2)  # this looks kind of ugly, but it works
         label.setMinimumWidth(width)
 
-    def update_percents(self):
+    def update_percents(self) -> None:
         self.label_rare.setText(f"Rare Consonant Chance ({self.slider_rare.value()}%)")
         self.label_diagraph.setText(f"Diagraph Chance ({self.slider_diagraph.value()}%)")
         self.label_double.setText(f"Double Letter Chance ({self.slider_double.value()}%)")
@@ -465,7 +466,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.label_qu.setText(f"Qu Replace ({self.slider_qu.value()}%)")
         self.label_xs.setText(f"Xs Replace ({self.slider_xs.value()}%)")
 
-    def pressed_import(self):
+    def pressed_import(self) -> None:
         log.trace(f"Entered: TuningDialog.{self.pressed_import.__name__}")
 
         # setup the file dialog
@@ -486,7 +487,7 @@ class TuningDialog(QtWidgets.QDialog):
         else:
             log.warning("No settings file chosen.")
 
-    def pressed_export(self):
+    def pressed_export(self) -> None:
         log.trace(f"Entered: TuningDialog.{self.pressed_export.__name__}")
 
         # save to file
@@ -494,7 +495,7 @@ class TuningDialog(QtWidgets.QDialog):
         log.info(f'Saving tunings to {tuning_path}...')
         self.gen.tuning.export_tuning(Path(tuning_path))
 
-    def pressed_save(self):
+    def pressed_save(self) -> None:
         log.trace(f"Entered: TuningDialog.{self.pressed_save.__name__}")
 
         # update generator chances
@@ -507,6 +508,6 @@ class TuningDialog(QtWidgets.QDialog):
 
         self.done(0)
 
-    def pressed_cancel(self):
+    def pressed_cancel(self) -> None:
         log.trace(f"Entered: TuningDialog.{self.pressed_cancel.__name__}")
         self.done(1)

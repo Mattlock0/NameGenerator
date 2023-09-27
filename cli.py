@@ -15,7 +15,7 @@ from src.utils import add_log_level
 BUILD_CONFIG_PATH, RUN_CONFIG_PATH = 'settings.ini', 'data/settings.ini'
 CONFIG_PATH = Path(RUN_CONFIG_PATH)
 add_log_level('TRACE', log.DEBUG - 5)
-LOG_LEVEL = log.DEBUG
+LOG_LEVEL = log.TRACE
 VERSION = 'v1.1'
 
 if __name__ == '__main__':

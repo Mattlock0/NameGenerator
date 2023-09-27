@@ -121,6 +121,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self.button_save.setFont(get_font(self.font_size))
         self.button_save.setObjectName("button_save")
         self.button_save.clicked.connect(self.pressed_save)
+        self.button_save.setDefault(True)
         self.layout_buttons.addWidget(self.button_save)
         self.button_cancel = QtWidgets.QPushButton(self)
         self.button_cancel.setMinimumSize(QtCore.QSize(0, 35))
