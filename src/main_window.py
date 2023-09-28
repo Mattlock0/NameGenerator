@@ -2,7 +2,7 @@
 from pathlib import Path
 
 # qt imports
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
 # project imports
@@ -18,6 +18,7 @@ TEXT_FONT_SIZE = 15
 NAME_FONT_SIZE = TEXT_FONT_SIZE + 5
 MENU_FONT_SIZE = TEXT_FONT_SIZE - 3
 DEFAULT_NUM_NAMES = 7
+ARCHIVE_PATH = "data/generated_names.txt"
 
 
 class MainWindow(object):
@@ -185,8 +186,8 @@ class MainWindow(object):
             self.combo_template.addItem(template)
         self.combo_template.addItem("Custom")
 
-        self.archive = self.settings.getboolean('archivenames')
-        TEXT_FONT_SIZE = self.settings.getint('fontsize')
+        self.archive = self.settings.getboolean('archive_names')
+        TEXT_FONT_SIZE = self.settings.getint('font_size')
         self.set_shading()
 
     def enable_enter(self):
@@ -211,11 +212,17 @@ class MainWindow(object):
         for _ in range(self.spin_num_gens.value()):
             generated_names.append(self.gen.generate_name(template))  # sends in chosen template
 
-        new_name_list = ""
-        for name in generated_names:
-            new_name_list += "\n" + name
-
+        new_name_list = "\n".join(generated_names)
         self.label_names.setText(new_name_list)
+        self.archive_names(generated_names)
+
+    def archive_names(self, name_list: list):
+        if self.settings.getboolean('archive_names'):
+            archive_list = f" {self.settings.get('archive_separator')} ".join(name_list)
+            log.info(f"Archiving names to {ARCHIVE_PATH}")
+
+            with open(ARCHIVE_PATH, "a") as archivefile:
+                archivefile.write(archive_list + "\n")
 
     def open_settings(self):
         log.trace(f"Entered: MainWindow.{func_name()}")

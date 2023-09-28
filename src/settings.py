@@ -15,6 +15,7 @@ class Settings:
         self.path = config_path
         self.read(config_path)
 
+        # see if we actually opened a config file
         try:
             self.get('lightmode')
         except configparser.NoSectionError:
@@ -48,9 +49,10 @@ class Settings:
     def create_default(self):
         log.trace(f"Entered: Settings.{func_name()}")
         self._configparser['general'] = {'templates': 'Cvccvc,Cvccv,Cvcv,Cvcvc,Cvccvv',
-                                         'archivenames': 'yes',
+                                         'archive_separator': '|',
+                                         'archive_names': 'no',
                                          'lightmode': 'no',
-                                         'fontsize': '15'}
+                                         'font_size': '15'}
 
     def save(self):
         log.trace(f"Entered: Settings.{func_name()}")

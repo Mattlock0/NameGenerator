@@ -12,7 +12,6 @@ class SettingsDialog(QtWidgets.QDialog):
         super().__init__()
         self.settings = settings
         self.font_size = font_size
-        self.archive = False
 
     def setup_ui(self, shading: Mode):
         log.trace(f"Entered: SettingsDialog.{func_name()}")
@@ -58,23 +57,41 @@ class SettingsDialog(QtWidgets.QDialog):
         self.layout_archive.addItem(spacerItem10)
         self.layout_main.addLayout(self.layout_archive)
 
+        # archive separator
+        self.layout_separator = QtWidgets.QHBoxLayout()
+        self.layout_separator.setObjectName("layout_separator")
+        spacerItem13 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_separator.addItem(spacerItem13)
+        self.label_separator = QtWidgets.QLabel(self)
+        self.label_separator.setFont(get_font(self.font_size))
+        self.label_separator.setObjectName("label_separator")
+        self.layout_separator.addWidget(self.label_separator)
+        self.enter_separator = QtWidgets.QLineEdit(self)
+        self.enter_separator.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.enter_separator.setFont(get_font(self.font_size))
+        self.enter_separator.setObjectName("enter_separator")
+        self.layout_separator.addWidget(self.enter_separator)
+        spacerItem14 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_separator.addItem(spacerItem14)
+        self.layout_main.addLayout(self.layout_separator)
+
         # font size
-        self.layout_fontsize = QtWidgets.QHBoxLayout()
-        self.layout_fontsize.setObjectName("layout_fontsize")
+        self.layout_font_size = QtWidgets.QHBoxLayout()
+        self.layout_font_size.setObjectName("layout_font_size")
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_fontsize.addItem(spacerItem2)
-        self.label_fontsize = QtWidgets.QLabel(self)
-        self.label_fontsize.setFont(get_font(self.font_size))
-        self.label_fontsize.setObjectName("label_fontsize")
-        self.layout_fontsize.addWidget(self.label_fontsize)
+        self.layout_font_size.addItem(spacerItem2)
+        self.label_font_size = QtWidgets.QLabel(self)
+        self.label_font_size.setFont(get_font(self.font_size))
+        self.label_font_size.setObjectName("label_font_size")
+        self.layout_font_size.addWidget(self.label_font_size)
         self.enter_font_size = QtWidgets.QLineEdit(self)
         self.enter_font_size.setMaximumSize(QtCore.QSize(50, 16777215))
         self.enter_font_size.setFont(get_font(self.font_size))
-        self.enter_font_size.setObjectName("enter_fontsize")
-        self.layout_fontsize.addWidget(self.enter_font_size)
+        self.enter_font_size.setObjectName("enter_font_size")
+        self.layout_font_size.addWidget(self.enter_font_size)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_fontsize.addItem(spacerItem3)
-        self.layout_main.addLayout(self.layout_fontsize)
+        self.layout_font_size.addItem(spacerItem3)
+        self.layout_main.addLayout(self.layout_font_size)
 
         # templates
         self.layout_templates = QtWidgets.QHBoxLayout()
@@ -142,7 +159,8 @@ class SettingsDialog(QtWidgets.QDialog):
         self.setWindowTitle(_translate(window_title, "Settings"))
         self.checkbox_lightmode.setText(_translate(window_title, "Light Mode"))
         self.checkbox_archive.setText(_translate(window_title, "Archive Names"))
-        self.label_fontsize.setText(_translate(window_title, "Font Size"))
+        self.label_separator.setText(_translate(window_title, "Archive Name Separator"))
+        self.label_font_size.setText(_translate(window_title, "Font Size"))
         self.label_templates.setText(_translate(window_title, "Templates"))
         self.button_default.setText(_translate(window_title, "Return to Default"))
         self.button_save.setText(_translate(window_title, "Save"))
@@ -177,9 +195,10 @@ class SettingsDialog(QtWidgets.QDialog):
     def initialize_settings(self):
         log.trace(f"Entered: SettingsDialog.{func_name()}")
         self.checkbox_lightmode.setChecked(self.settings.getboolean('lightmode'))
-        self.checkbox_archive.setChecked(self.settings.getboolean('archivenames'))
+        self.checkbox_archive.setChecked(self.settings.getboolean('archive_names'))
+        self.enter_separator.setText(self.settings.get('archive_separator'))
         self.enter_templates.setText(self.settings.get('templates'))
-        self.enter_font_size.setText(self.settings.get('fontsize'))
+        self.enter_font_size.setText(self.settings.get('font_size'))
 
     def check(self, checkbox: QtWidgets.QCheckBox):
         log.trace(f"Entered: SettingsDialog.{func_name()}")
@@ -188,11 +207,11 @@ class SettingsDialog(QtWidgets.QDialog):
     def pressed_save(self):
         log.trace(f"Entered: SettingsDialog.{func_name()}")
 
-        self.settings.set('lightmode', self.check(self.checkbox_lightmode))
-        self.settings.set('archivenames', self.check(self.checkbox_archive))
-
-        self.settings.set('fontsize', self.enter_font_size.text())
         self.settings.set('templates', self.enter_templates.text())
+        self.settings.set('archive_names', self.check(self.checkbox_archive))
+        self.settings.set('archive_separator', self.enter_separator.text())
+        self.settings.set('lightmode', self.check(self.checkbox_lightmode))
+        self.settings.set('font_size', self.enter_font_size.text())
 
         # save settings to a file
         if self.settings.path.is_file():
