@@ -1,49 +1,48 @@
 # system imports
 from pathlib import Path
-import logging as log
-import sys
 
 # qt imports
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
 # project imports
-from src.generator_v2 import Generator
-from src.config import Config
-from src.shading import DARKMODE, LIGHTMODE
 from src.settings_dialog import SettingsDialog
+from src.tuning_dialog import TuningDialog
+from src.generator_v2 import Generator
+from src.settings import Settings
+from src.utils import *
 
-# defaults
-NAME_FONT_SIZE = 20
-TEXT_FONT_SIZE = 15
-DEFAULT_NUM_NAMES = 7
+# consts
 MAX_NAME_GEN = 40
+DEFAULT_NUM_NAMES = 7
+ARCHIVE_PATH = "data/generated_names.txt"
 
 
 class MainWindow(object):
     def __init__(self, config_path: Path, version: str):
-        self.gen = Generator()  # setup generator
+        # initialize generator
+        self.gen = Generator(config_path)
 
-        # setup config
-        self.config = Config(config_path)
-        self.config.read_config(self.gen)
-        if self.config.read_config(self.gen):
-            self.template_list = self.config.get_templates()
-        else:
-            self.template_list = ["Cvccvc", "Cvccv", "Cvcv", "Cvcvc", "Cvccvv", "Cvcvcv", "Cvcvv", "Cvcvccv", "Cvvcv",
-                                  "Vccvc", "Cvcvvc", "Cvcc", "Cvccvcv", "Crvc", "Cvcy"]
+        # initialize settings
+        self.settings = Settings(config_path)
+        self.templates = []
+        self.font_size = 0
+        self.lightmode = False
+        self.archive = False
 
         # extra class elements
         self.settings_window = QtWidgets.QMainWindow()
         self.version = version
 
     def setup_ui(self, main_window: QtWidgets.QMainWindow):
-        log.trace(f"Entered: MainWindow.{self.setup_ui.__name__}")
+        log.trace(f"Entered: MainWindow.{func_name()}")
         log.debug("Setting up UI...")
-        main_window.setObjectName("main_window")
-        main_window.resize(800, 600)
 
-        self.centralwidget = QtWidgets.QWidget(main_window)
+        self.main_window = main_window
+        self.main_window.setObjectName("main_window")
+        self.main_window.resize(800, 600)
+
+        self.centralwidget = QtWidgets.QWidget(self.main_window)
         self.centralwidget.setObjectName("centralwidget")
 
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -57,220 +56,207 @@ class MainWindow(object):
         self.horizontalLayout.setContentsMargins(5, 25, 5, 25)
         self.horizontalLayout.setObjectName("horizontalLayout")
 
-        self.template_select = QtWidgets.QComboBox(self.centralwidget)
-        self.template_select.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.template_select.setFont(self.get_font(TEXT_FONT_SIZE))
-        self.template_select.setObjectName("template_select")
-        self.horizontalLayout.addWidget(self.template_select)
+        self.combo_template = QtWidgets.QComboBox(self.centralwidget)
+        self.combo_template.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.combo_template.setObjectName("template_select")
+        self.horizontalLayout.addWidget(self.combo_template)
 
-        for template in self.template_list:
-            self.template_select.addItem(template)
-        self.template_select.addItem("Custom")
+        self.combo_template.activated.connect(self.enable_enter)
 
-        self.template_select.activated.connect(self.enable_enter)
+        self.spin_num_gens = QtWidgets.QSpinBox(self.centralwidget)
+        self.spin_num_gens.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.spin_num_gens.setMinimum(1)
+        self.spin_num_gens.setMaximum(MAX_NAME_GEN)
+        self.spin_num_gens.setValue(DEFAULT_NUM_NAMES)
+        self.spin_num_gens.setObjectName("num_sel")
+        self.horizontalLayout.addWidget(self.spin_num_gens)
 
-        self.num_sel = QtWidgets.QSpinBox(self.centralwidget)
-        self.num_sel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.num_sel.setMinimum(1)
-        self.num_sel.setMaximum(MAX_NAME_GEN)
-        self.num_sel.setValue(DEFAULT_NUM_NAMES)
-        self.num_sel.setFont(self.get_font(TEXT_FONT_SIZE))
-        self.num_sel.setObjectName("num_sel")
-        self.horizontalLayout.addWidget(self.num_sel)
-
-        self.generate_button = QtWidgets.QPushButton(self.centralwidget)
-        self.generate_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.generate_button.setFont(self.get_font(TEXT_FONT_SIZE))
-        self.generate_button.clicked.connect(self.generate_names)
-        self.generate_button.setObjectName("generate_button")
-        self.horizontalLayout.addWidget(self.generate_button)
+        self.button_generate = QtWidgets.QPushButton(self.centralwidget)
+        self.button_generate.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.button_generate.clicked.connect(self.generate_names)
+        self.button_generate.setObjectName("generate_button")
+        self.button_generate.setDefault(True)
+        self.horizontalLayout.addWidget(self.button_generate)
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
-        self.template_enter = QtWidgets.QLineEdit(self.centralwidget)
-        self.template_enter.setFont(self.get_font(TEXT_FONT_SIZE))
-        self.template_enter.setAlignment(QtCore.Qt.AlignCenter)
-        self.template_enter.setObjectName("template_enter")
-        self.verticalLayout.addWidget(self.template_enter)
-        self.template_enter.hide()
+        self.enter_template = QtWidgets.QLineEdit(self.centralwidget)
+        self.enter_template.setAlignment(QtCore.Qt.AlignCenter)
+        self.enter_template.setObjectName("template_enter")
+        self.verticalLayout.addWidget(self.enter_template)
+        self.enter_template.hide()
 
-        self.names_list = QtWidgets.QLabel(self.centralwidget)
-        self.names_list.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        self.names_list.setAlignment(QtCore.Qt.AlignCenter)
-        self.names_list.setObjectName("names_list")
-        self.names_list.setFont(self.get_font(NAME_FONT_SIZE))
-        self.verticalLayout.addWidget(self.names_list)
+        self.label_names = QtWidgets.QLabel(self.centralwidget)
+        self.label_names.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.label_names.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_names.setObjectName("names_list")
+        self.verticalLayout.addWidget(self.label_names)
 
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
-        main_window.setCentralWidget(self.centralwidget)
+        self.main_window.setCentralWidget(self.centralwidget)
 
-        self.menuBar = QtWidgets.QMenuBar(main_window)
+        self.menuBar = QtWidgets.QMenuBar(self.main_window)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menuBar.setObjectName("menuBar")
         self.menuMenu = QtWidgets.QMenu(self.menuBar)
         self.menuMenu.setObjectName("menuMenu")
-        main_window.setMenuBar(self.menuBar)
+        self.main_window.setMenuBar(self.menuBar)
 
-        self.action_settings = QtWidgets.QAction(main_window)
-        self.action_settings.triggered.connect(self.settings)
+        self.action_settings = QtWidgets.QAction(self.main_window)
+        self.action_settings.triggered.connect(self.open_settings)
         self.action_settings.setObjectName("action_settings")
         self.menuMenu.addAction(self.action_settings)
 
-        self.action_shading_mode = QtWidgets.QAction(main_window)
-        self.action_shading_mode.triggered.connect(lambda: self.set_shading(main_window))
-        self.action_shading_mode.setObjectName("action_shading_mode")
-        self.menuMenu.addAction(self.action_shading_mode)
+        self.action_tuning = QtWidgets.QAction(self.main_window)
+        self.action_tuning.triggered.connect(self.open_tuning)
+        self.action_tuning.setObjectName("action_tuning")
+        self.menuMenu.addAction(self.action_tuning)
 
-        self.action_about = QtWidgets.QAction(main_window)
-        self.action_about.triggered.connect(self.about_page)
+        self.action_about = QtWidgets.QAction(self.main_window)
+        self.action_about.triggered.connect(self.open_about)
         self.action_about.setObjectName("action_about")
         self.menuMenu.addAction(self.action_about)
 
         self.menuBar.addAction(self.menuMenu.menuAction())
 
-        self.set_shading(main_window)
-        self.retranslate_ui(main_window)
-        QtCore.QMetaObject.connectSlotsByName(main_window)
-        main_window.setTabOrder(self.generate_button, self.template_select)
-        main_window.setTabOrder(self.template_select, self.num_sel)
-        main_window.setTabOrder(self.num_sel, self.template_enter)
+        self.set_shading()
+        self.retranslate_ui()
+        QtCore.QMetaObject.connectSlotsByName(self.main_window)
+        self.main_window.setTabOrder(self.button_generate, self.combo_template)
+        self.main_window.setTabOrder(self.combo_template, self.spin_num_gens)
+        self.main_window.setTabOrder(self.spin_num_gens, self.enter_template)
 
-    def retranslate_ui(self, main_window):
-        log.trace(f"Entered: MainWindow.{self.retranslate_ui.__name__}")
+    def retranslate_ui(self):
+        log.trace(f"Entered: MainWindow.{func_name()}")
         _translate = QtCore.QCoreApplication.translate
-        main_window.setWindowTitle(_translate("main_window", "main_window"))
-        self.generate_button.setText(_translate("main_window", "Generate Names"))
-        self.generate_button.setShortcut(_translate("main_window", "G"))
-        self.template_enter.setPlaceholderText(_translate("main_window", "Enter template... (* is wildcard)"))
-        self.names_list.setText(_translate("main_window", ""))
-        self.menuMenu.setTitle(_translate("main_window", "Menu"))
-        self.action_settings.setText(_translate("main_window", "Settings"))
-        self.action_settings.setShortcut(_translate("main_window", "Ctrl+S"))
-        self.action_shading_mode.setText(_translate("main_window", "Light Mode"))
-        self.action_shading_mode.setShortcut(_translate("main_window", "Ctrl+Shift+L"))
-        self.action_about.setText(_translate("main_window", "About"))
+        self.main_window.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.button_generate.setText(_translate("MainWindow", "Generate Names"))
+        self.button_generate.setShortcut(_translate("MainWindow", "G"))
+        self.enter_template.setPlaceholderText(_translate("MainWindow", "Enter template... (* is wildcard)"))
+        self.label_names.setText(_translate("MainWindow", ""))
+        self.menuMenu.setTitle(_translate("MainWindow", "Menu"))
+        self.action_settings.setText(_translate("MainWindow", "Settings"))
+        self.action_settings.setShortcut(_translate("MainWindow", "Ctrl+S"))
+        self.action_tuning.setText(_translate("MainWindow", "Tuning"))
+        self.action_tuning.setShortcut(_translate("MainWindow", "Ctrl+T"))
+        self.action_about.setText(_translate("MainWindow", "About"))
+        self.read_settings()
 
-    def get_font(self, pt_size):
-        log.trace(f"Entered: MainWindow.{self.get_font.__name__}")
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI Black")
-        font.setPointSize(pt_size)
-        font.setWeight(75)
+    def set_shading(self, switch: bool = False):
+        log.trace(f"Entered: MainWindow.{func_name()}")
+        shading = LIGHTMODE if self.lightmode else DARKMODE
 
-        return font
+        self.main_window.setStyleSheet(f"background-color:{shading.background}; color:{shading.text}")
 
-    def get_shading(self, just_mode=False):
-        log.trace(f"Entered: MainWindow.{self.get_shading.__name__}")
-        if self.action_shading_mode.text() == "Light Mode":
-            return DARKMODE if just_mode else LIGHTMODE, "Dark Mode"
-        else:
-            return LIGHTMODE if just_mode else DARKMODE, "Light Mode"
+        inset_border = get_border(Border.INSET, shading)
 
-    def set_shading(self, window: QtWidgets.QMainWindow):
-        log.trace(f"Entered: MainWindow.{self.set_shading.__name__}")
-        ret = self.get_shading()
-        self.action_shading_mode.setText(ret[1])
-        mode = ret[0]
-
-        window.setStyleSheet(f"background-color:{mode.background}; color:{mode.text}")
-
-        inset_border = (
-            f"border-bottom: 1px solid {mode.light_border}; border-right: 1px solid {mode.light_border}; "
-            f"border-left: 2px solid {mode.border}; border-top: 2px solid {mode.border}\n")
-        hover_boarder = (
-            f"border-top: 1px solid {mode.light_border}; border-left: 1px solid {mode.light_border}; border"
-            f"-right: 2px solid {mode.border}; border-bottom: 2px solid {mode.border}\n")
-        outset_boarder = (
-            f"border-top: 1px solid {mode.light_border}; border-left: 1px solid {mode.light_border}; border"
-            f"-right: 3px solid {mode.border}; border-bottom: 3px solid {mode.border}\n")
-
-        self.centralwidget.setStyleSheet("QPushButton {\n"
-                                         "border-style: outset;\n"
-                                         "border-width: 1px;\n"
-                                         "border-radius: 5px;\n"
-                                         f"{outset_boarder}"
-                                         "}\n"
-                                         "QPushButton:hover {\n"
-                                         f"background-color: {mode.hover};\n"
-                                         "border-style: outset;\n"
-                                         "border-radius: 5px;\n"
-                                         f"{hover_boarder}"
-                                         "}\n"
-                                         "QPushButton:pressed {\n"
-                                         "border-style: inset;\n"
-                                         "border-radius: 5px;\n"
-                                         f"{inset_border}"
-                                         "}\n"
+        self.centralwidget.setStyleSheet(f"{style_button(shading)}"
                                          "QSpinBox {\n"
                                          "border-style: outset;\n"
                                          f"{inset_border}"
                                          "}\n"
                                          "QLineEdit {\n"
-                                         f"background-color: {mode.edit};\n"
+                                         f"background-color: {shading.edit};\n"
                                          "border-style: outset;\n"
-                                         "border-width: 1px;\n"
-                                         "border-radius: 5px;\n"
                                          f"{inset_border}"
                                          "}")
-        self.menuBar.setStyleSheet(f"QMenuBar:item:hover {{ background-color: {mode.hover} }}\n"
-                                   f"QMenuBar:item:selected {{ background-color: {mode.hover} }}")
-        self.menuMenu.setStyleSheet(f"QMenu:item {{ background-color: {mode.background} }}\n"
-                                    f"QMenu:item:selected {{ background-color: {mode.hover} }}")
+        self.menuBar.setStyleSheet(f"QMenuBar:item:hover {{ background-color: {shading.hover} }}\n"
+                                   f"QMenuBar:item:selected {{ background-color: {shading.hover} }}")
+        self.menuMenu.setStyleSheet(f"QMenu:item {{ background-color: {shading.background} }}\n"
+                                    f"QMenu:item:selected {{ background-color: {shading.hover} }}")
+
+    def update_fonts(self):
+        self.combo_template.setFont(get_font(self.font_size))
+        self.spin_num_gens.setFont(get_font(self.font_size))
+        self.button_generate.setFont(get_font(self.font_size))
+        self.enter_template.setFont(get_font(self.font_size))
+        self.label_names.setFont(get_font(self.font_size + 5))
+        self.menuBar.setFont(get_font(self.font_size - 3))
+        self.menuMenu.setFont(get_font(self.font_size - 3))
+
+    def read_settings(self):
+        log.trace(f"Entered: MainWindow.{func_name()}")
+
+        # shading mode
+        self.lightmode = self.settings.getboolean('lightmode')
+        self.set_shading()
+
+        # templates
+        self.templates = self.settings.getlist('templates')
+        self.combo_template.clear()
+        for template in self.templates:
+            self.combo_template.addItem(template)
+        self.combo_template.addItem("Custom")
+
+        # font size
+        self.font_size = self.settings.getint('font_size')
+        self.update_fonts()
+
+        # archive
+        self.archive = self.settings.getboolean('archive_names')
 
     def enable_enter(self):
-        log.trace(f"Entered: MainWindow.{self.enable_enter.__name__}")
-        choice = self.template_select.currentText()
+        log.trace(f"Entered: MainWindow.{func_name()}")
+        choice = self.combo_template.currentText()
 
         if choice == "Custom":
-            self.template_enter.show()
+            self.enter_template.show()
             log.debug("Template bar enabled")
         else:
-            self.template_enter.hide()
+            self.enter_template.hide()
 
     def generate_names(self):
-        log.trace(f"Entered: MainWindow.{self.generate_names.__name__}")
-        template = self.template_select.currentText()
+        log.trace(f"Entered: MainWindow.{func_name()}")
+        template = self.combo_template.currentText()
         if template == "Custom":
-            template = self.template_enter.text()
+            template = self.enter_template.text()
         generated_names = []
 
-        # log.debug(f"Generating {self.num_sel.value()} names")
-        log.debug(f"Generating... Rare Chance: {self.gen.rare_chance} Double Chance: {self.gen.double_chance} Qu Chance:"
-                  f" {self.gen.qu_chance} Diagraph Chance: {self.gen.diagraph_chance}")
-        for _ in range(self.num_sel.value()):
+        log.debug(f"Generating... Rare: {self.gen.rare_chance}% | Diagraph: {self.gen.diagraph_chance}% | "
+                  f"Double: {self.gen.double_chance}% | Qu: {self.gen.qu_chance}%")
+        for _ in range(self.spin_num_gens.value()):
             generated_names.append(self.gen.generate_name(template))  # sends in chosen template
 
-        new_name_list = ""
-        for name in generated_names:
-            new_name_list += "\n" + name
+        generated_names.sort()
+        new_name_list = "\n".join(generated_names)
+        self.label_names.setText(new_name_list)
+        self.archive_names(generated_names)
 
-        self.names_list.setText(new_name_list)
+    def archive_names(self, name_list: list):
+        if self.settings.getboolean('archive_names'):
+            archive_list = f" {self.settings.get('archive_separator')} ".join(name_list)
+            log.info(f"Archiving names to {ARCHIVE_PATH}")
 
-    def settings(self):
-        log.trace(f"Entered: MainWindow.{self.settings.__name__}")
-        if not self.config.read_config_file:
-            msg = QMessageBox()
-            msg.setWindowTitle("ERROR")
-            msg.setText("Settings file not found!")
-            msg.setIcon(QMessageBox.Critical)
-            return msg.exec_()
+            with open(ARCHIVE_PATH, "a") as archivefile:
+                archivefile.write(archive_list + "\n")
 
-        log.info("Settings chosen...")
-        settings_dialog = SettingsDialog(self.gen)
-        settings_dialog.setup_ui(self.get_shading(True)[0])
+    def open_settings(self):
+        log.trace(f"Entered: MainWindow.{func_name()}")
+        settings_dialog = SettingsDialog(self.settings, self.font_size - 2)
+        settings_dialog.setup_ui(LIGHTMODE if self.lightmode else DARKMODE)
         settings_dialog.exec_()
 
-    def about_page(self):
-        log.trace(f"Entered: MainWindow.{self.get_shading.__name__}")
+        self.read_settings()
+
+    def open_tuning(self):
+        log.trace(f"Entered: MainWindow.{func_name()}")
+        tuning_dialog = TuningDialog(self.gen, self.font_size - 4)
+        tuning_dialog.setup_ui(LIGHTMODE if self.lightmode else DARKMODE)
+        tuning_dialog.exec_()
+
+    def open_about(self):
+        log.trace(f"Entered: MainWindow.{func_name()}")
+
+        shading = LIGHTMODE if self.lightmode else DARKMODE
+
         about = QMessageBox()
         about.setWindowTitle("About")
         about.setText(f"Name Generator Version: {self.version}")
         about.setInformativeText("Creator: Matthew Marchetti")
+        about.setFont(get_font(self.font_size - 3))
         about.setIcon(QMessageBox.Information)
         about.setStandardButtons(QMessageBox.Ok)
 
-        mode = DARKMODE if self.action_shading_mode.text() == "Light Mode" else LIGHTMODE
-
-        about.setStyleSheet(f"background-color: {mode.background}; color: {mode.text}")
+        about.setStyleSheet(f"background-color: {shading.background}; color: {shading.text}\n")
 
         x = about.exec_()
