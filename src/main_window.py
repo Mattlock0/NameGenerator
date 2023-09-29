@@ -12,11 +12,8 @@ from src.generator_v2 import Generator
 from src.settings import Settings
 from src.utils import *
 
-# defaults
+# consts
 MAX_NAME_GEN = 40
-TEXT_FONT_SIZE = 15
-NAME_FONT_SIZE = TEXT_FONT_SIZE + 5
-MENU_FONT_SIZE = TEXT_FONT_SIZE - 3
 DEFAULT_NUM_NAMES = 7
 ARCHIVE_PATH = "data/generated_names.txt"
 
@@ -29,6 +26,7 @@ class MainWindow(object):
         # initialize settings
         self.settings = Settings(config_path)
         self.templates = []
+        self.font_size = 0
         self.lightmode = False
         self.archive = False
 
@@ -60,7 +58,6 @@ class MainWindow(object):
 
         self.combo_template = QtWidgets.QComboBox(self.centralwidget)
         self.combo_template.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.combo_template.setFont(get_font(TEXT_FONT_SIZE))
         self.combo_template.setObjectName("template_select")
         self.horizontalLayout.addWidget(self.combo_template)
 
@@ -71,13 +68,11 @@ class MainWindow(object):
         self.spin_num_gens.setMinimum(1)
         self.spin_num_gens.setMaximum(MAX_NAME_GEN)
         self.spin_num_gens.setValue(DEFAULT_NUM_NAMES)
-        self.spin_num_gens.setFont(get_font(TEXT_FONT_SIZE))
         self.spin_num_gens.setObjectName("num_sel")
         self.horizontalLayout.addWidget(self.spin_num_gens)
 
         self.button_generate = QtWidgets.QPushButton(self.centralwidget)
         self.button_generate.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.button_generate.setFont(get_font(TEXT_FONT_SIZE))
         self.button_generate.clicked.connect(self.generate_names)
         self.button_generate.setObjectName("generate_button")
         self.button_generate.setDefault(True)
@@ -86,7 +81,6 @@ class MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.enter_template = QtWidgets.QLineEdit(self.centralwidget)
-        self.enter_template.setFont(get_font(TEXT_FONT_SIZE))
         self.enter_template.setAlignment(QtCore.Qt.AlignCenter)
         self.enter_template.setObjectName("template_enter")
         self.verticalLayout.addWidget(self.enter_template)
@@ -96,7 +90,6 @@ class MainWindow(object):
         self.label_names.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         self.label_names.setAlignment(QtCore.Qt.AlignCenter)
         self.label_names.setObjectName("names_list")
-        self.label_names.setFont(get_font(NAME_FONT_SIZE))
         self.verticalLayout.addWidget(self.label_names)
 
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
@@ -105,10 +98,8 @@ class MainWindow(object):
         self.menuBar = QtWidgets.QMenuBar(self.main_window)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menuBar.setObjectName("menuBar")
-        self.menuBar.setFont(get_font(MENU_FONT_SIZE))
         self.menuMenu = QtWidgets.QMenu(self.menuBar)
         self.menuMenu.setObjectName("menuMenu")
-        self.menuMenu.setFont(get_font(MENU_FONT_SIZE))
         self.main_window.setMenuBar(self.menuBar)
 
         self.action_settings = QtWidgets.QAction(self.main_window)
@@ -174,21 +165,35 @@ class MainWindow(object):
         self.menuMenu.setStyleSheet(f"QMenu:item {{ background-color: {shading.background} }}\n"
                                     f"QMenu:item:selected {{ background-color: {shading.hover} }}")
 
+    def update_fonts(self):
+        self.combo_template.setFont(get_font(self.font_size))
+        self.spin_num_gens.setFont(get_font(self.font_size))
+        self.button_generate.setFont(get_font(self.font_size))
+        self.enter_template.setFont(get_font(self.font_size))
+        self.label_names.setFont(get_font(self.font_size + 5))
+        self.menuBar.setFont(get_font(self.font_size - 3))
+        self.menuMenu.setFont(get_font(self.font_size - 3))
+
     def read_settings(self):
         log.trace(f"Entered: MainWindow.{func_name()}")
-        global TEXT_FONT_SIZE
 
+        # shading mode
         self.lightmode = self.settings.getboolean('lightmode')
-        self.templates = self.settings.getlist('templates')
+        self.set_shading()
 
+        # templates
+        self.templates = self.settings.getlist('templates')
         self.combo_template.clear()
         for template in self.templates:
             self.combo_template.addItem(template)
         self.combo_template.addItem("Custom")
 
+        # font size
+        self.font_size = self.settings.getint('font_size')
+        self.update_fonts()
+
+        # archive
         self.archive = self.settings.getboolean('archive_names')
-        TEXT_FONT_SIZE = self.settings.getint('font_size')
-        self.set_shading()
 
     def enable_enter(self):
         log.trace(f"Entered: MainWindow.{func_name()}")
@@ -212,6 +217,7 @@ class MainWindow(object):
         for _ in range(self.spin_num_gens.value()):
             generated_names.append(self.gen.generate_name(template))  # sends in chosen template
 
+        generated_names.sort()
         new_name_list = "\n".join(generated_names)
         self.label_names.setText(new_name_list)
         self.archive_names(generated_names)
@@ -226,7 +232,7 @@ class MainWindow(object):
 
     def open_settings(self):
         log.trace(f"Entered: MainWindow.{func_name()}")
-        settings_dialog = SettingsDialog(self.settings, MENU_FONT_SIZE + 1)
+        settings_dialog = SettingsDialog(self.settings, self.font_size - 2)
         settings_dialog.setup_ui(LIGHTMODE if self.lightmode else DARKMODE)
         settings_dialog.exec_()
 
@@ -234,7 +240,7 @@ class MainWindow(object):
 
     def open_tuning(self):
         log.trace(f"Entered: MainWindow.{func_name()}")
-        tuning_dialog = TuningDialog(self.gen, MENU_FONT_SIZE - 1)
+        tuning_dialog = TuningDialog(self.gen, self.font_size - 4)
         tuning_dialog.setup_ui(LIGHTMODE if self.lightmode else DARKMODE)
         tuning_dialog.exec_()
 
@@ -247,7 +253,7 @@ class MainWindow(object):
         about.setWindowTitle("About")
         about.setText(f"Name Generator Version: {self.version}")
         about.setInformativeText("Creator: Matthew Marchetti")
-        about.setFont(get_font(MENU_FONT_SIZE))
+        about.setFont(get_font(self.font_size - 3))
         about.setIcon(QMessageBox.Information)
         about.setStandardButtons(QMessageBox.Ok)
 
