@@ -1,5 +1,5 @@
 # system imports
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from pathlib import Path
 from typing import Any
 import logging as log
@@ -11,7 +11,7 @@ from src.utils import func_name
 
 class Settings:
     def __init__(self, config_path: Path):
-        self._configparser = SafeConfigParser()
+        self._configparser = ConfigParser()
         self.path = config_path
         self.read(config_path)
 

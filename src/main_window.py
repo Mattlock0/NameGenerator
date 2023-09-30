@@ -8,20 +8,20 @@ from PyQt5.QtWidgets import QMessageBox
 # project imports
 from src.settings_dialog import SettingsDialog
 from src.tuning_dialog import TuningDialog
-from src.generator_v2 import Generator
+from src.generator_v3 import Generator
 from src.settings import Settings
 from src.utils import *
 
 # consts
 MAX_NAME_GEN = 40
-DEFAULT_NUM_NAMES = 7
+DEFAULT_NUM_NAMES = 1
 ARCHIVE_PATH = "data/generated_names.txt"
 
 
 class MainWindow(object):
     def __init__(self, config_path: Path, version: str):
         # initialize generator
-        self.gen = Generator(config_path)
+        self.gen = Generator()
 
         # initialize settings
         self.settings = Settings(config_path)
@@ -213,7 +213,7 @@ class MainWindow(object):
         generated_names = []
 
         log.debug(f"Generating... Rare: {self.gen.rare_chance}% | Diagraph: {self.gen.diagraph_chance}% | "
-                  f"Double: {self.gen.double_chance}% | Qu: {self.gen.qu_chance}%")
+                  f"Double: {self.gen.double_chance}% | Common: {self.gen.common_chance}%")
         for _ in range(self.spin_num_gens.value()):
             generated_names.append(self.gen.generate_name(template))  # sends in chosen template
 

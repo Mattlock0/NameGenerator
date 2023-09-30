@@ -6,7 +6,7 @@ import math
 from PyQt5 import QtCore, QtWidgets
 
 # project imports
-from src.generator_v2 import Generator
+from src.generator_v3 import Generator
 from src.utils import *
 
 
@@ -219,6 +219,34 @@ class TuningDialog(QtWidgets.QDialog):
         self.layout_beginning_double.addItem(spacerItem22)
         self.layout_main.addLayout(self.layout_beginning_double)
 
+        # begin and end names with y
+        self.layout_beg_end_y = QtWidgets.QHBoxLayout()
+        self.layout_beg_end_y.setObjectName("layout_beg_end_y")
+        spacerItem29 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_beg_end_y.addItem(spacerItem29)
+        self.checkbox_beginning_ending_y = QtWidgets.QCheckBox(self)
+        self.checkbox_beginning_ending_y.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.checkbox_beginning_ending_y.setFont(get_font(self.main_font_size))
+        self.checkbox_beginning_ending_y.setObjectName("checkbox_beg_end_y")
+        self.layout_beg_end_y.addWidget(self.checkbox_beginning_ending_y)
+        spacerItem30 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_beg_end_y.addItem(spacerItem30)
+        self.layout_main.addLayout(self.layout_beg_end_y)
+
+        # add double letters to endings
+        self.layout_ending_double = QtWidgets.QHBoxLayout()
+        self.layout_ending_double.setObjectName("layout_ending_double")
+        spacerItem27 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_ending_double.addItem(spacerItem27)
+        self.checkbox_ending_double = QtWidgets.QCheckBox(self)
+        self.checkbox_ending_double.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.checkbox_ending_double.setFont(get_font(self.main_font_size))
+        self.checkbox_ending_double.setObjectName("checkbox_ending_double")
+        self.layout_ending_double.addWidget(self.checkbox_ending_double)
+        spacerItem28 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_ending_double.addItem(spacerItem28)
+        self.layout_main.addLayout(self.layout_ending_double)
+
         # remove ending js
         self.layout_ending_j = QtWidgets.QHBoxLayout()
         self.layout_ending_j.setObjectName("layout_ending_j")
@@ -246,34 +274,6 @@ class TuningDialog(QtWidgets.QDialog):
         spacerItem26 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.layout_ending_v.addItem(spacerItem26)
         self.layout_main.addLayout(self.layout_ending_v)
-
-        # add double letters to endings
-        self.layout_ending_double = QtWidgets.QHBoxLayout()
-        self.layout_ending_double.setObjectName("layout_ending_double")
-        spacerItem27 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_ending_double.addItem(spacerItem27)
-        self.checkbox_ending_double = QtWidgets.QCheckBox(self)
-        self.checkbox_ending_double.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.checkbox_ending_double.setFont(get_font(self.main_font_size))
-        self.checkbox_ending_double.setObjectName("checkbox_ending_double")
-        self.layout_ending_double.addWidget(self.checkbox_ending_double)
-        spacerItem28 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_ending_double.addItem(spacerItem28)
-        self.layout_main.addLayout(self.layout_ending_double)
-
-        # begin and end names with y
-        self.layout_beg_end_y = QtWidgets.QHBoxLayout()
-        self.layout_beg_end_y.setObjectName("layout_beg_end_y")
-        spacerItem29 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_beg_end_y.addItem(spacerItem29)
-        self.checkbox_beginning_ending_y = QtWidgets.QCheckBox(self)
-        self.checkbox_beginning_ending_y.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.checkbox_beginning_ending_y.setFont(get_font(self.main_font_size))
-        self.checkbox_beginning_ending_y.setObjectName("checkbox_beg_end_y")
-        self.layout_beg_end_y.addWidget(self.checkbox_beginning_ending_y)
-        spacerItem30 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_beg_end_y.addItem(spacerItem30)
-        self.layout_main.addLayout(self.layout_beg_end_y)
 
         # add y as a consonant
         self.layout_y_consonant = QtWidgets.QHBoxLayout()
@@ -397,7 +397,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.checkbox_beginning_double.setText(_translate(window_title, "Beginning: No double letters"))
         self.checkbox_ending_j.setText(_translate(window_title, "Ending: No \"J\"s"))
         self.checkbox_ending_v.setText(_translate(window_title, "Ending: No \"V\"s"))
-        self.checkbox_ending_double.setText(_translate(window_title, "Ending: Double \"F\", \"L\", and \"S\"s"))
+        self.checkbox_ending_double.setText(_translate(window_title, "Ending: Double F/L/S/Ts"))
         self.checkbox_beginning_ending_y.setText(_translate(window_title, "Beginning/Ending: \"Y\" Bias"))
         self.checkbox_y_consonant.setText(_translate(window_title, "Include \"Y\" as Consonant"))
 
@@ -505,6 +505,14 @@ class TuningDialog(QtWidgets.QDialog):
         self.gen.common_chance = self.slider_common.value()
         self.gen.qu_chance = self.slider_qu.value()
         self.gen.xs_chance = self.slider_xs.value()
+
+        # update enforcers
+        self.gen.beginning_double = self.checkbox_beginning_double.isChecked()
+        self.gen.ending_j = self.checkbox_ending_j.isChecked()
+        self.gen.ending_v = self.checkbox_ending_v.isChecked()
+        self.gen.ending_double = self.checkbox_ending_double.isChecked()
+        self.gen.beginning_ending_y = self.checkbox_beginning_ending_y.isChecked()
+        self.gen.y_consonant = self.checkbox_y_consonant.isChecked()
 
         self.done(0)
 

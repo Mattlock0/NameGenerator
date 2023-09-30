@@ -1,5 +1,5 @@
 # system imports
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from src.utils import func_name
 from pathlib import Path
 import logging as log
@@ -10,7 +10,7 @@ ENF_SECTION = 'enforcers'
 
 class Tuning:
     def __init__(self):
-        self.export = SafeConfigParser()
+        self.export = ConfigParser()
         self.export[GEN_SECTION] = {'rare': '5', 'diagraph': '15', 'double': '5', 'common': '0', 'qu': '25', 'xs': '40'}
         self.export[ENF_SECTION] = {'b_double': 'yes', 'e_j': 'yes', 'e_v': 'no', 'e_double': 'no', 'b_e_y': 'yes',
                                     'y_conso': 'no'}

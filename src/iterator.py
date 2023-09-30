@@ -33,9 +33,19 @@ class Iterator(object):
         return False
 
     def has_prev(self):
-        if self.index - 1 >= 0:
-            return True
-        return False
+        if self.index - 1 < 0:
+            return False
+        return True
 
     def __iter__(self):
         return self
+
+    def __str__(self):
+        string = ""
+        for index, element in enumerate(self.collection):
+            if index == self.index:
+                string += f"<{element}>"
+            else:
+                string += str(element)
+
+        return string
