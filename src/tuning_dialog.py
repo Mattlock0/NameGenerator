@@ -18,7 +18,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.header_font_size = font_size + 4
 
     def setup_ui(self, shading: Mode):
-        log.trace(f"Entered: TuningDialog.{self.setup_ui.__name__}")
+        log.trace(f"Entered: TuningDialog.{func_name()}")
         self.resize(500, 500)
         self.setModal(True)
         self.mode = shading
@@ -247,7 +247,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.layout_ending_double.addItem(spacerItem28)
         self.layout_main.addLayout(self.layout_ending_double)
 
-        # remove ending js
+        # remove ending js & vs
         self.layout_ending_j = QtWidgets.QHBoxLayout()
         self.layout_ending_j.setObjectName("layout_ending_j")
         spacerItem23 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -257,23 +257,14 @@ class TuningDialog(QtWidgets.QDialog):
         self.checkbox_ending_j.setFont(get_font(self.main_font_size))
         self.checkbox_ending_j.setObjectName("checkbox_ending_j")
         self.layout_ending_j.addWidget(self.checkbox_ending_j)
-        spacerItem24 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_ending_j.addItem(spacerItem24)
-        self.layout_main.addLayout(self.layout_ending_j)
-
-        # remove ending vs
-        self.layout_ending_v = QtWidgets.QHBoxLayout()
-        self.layout_ending_v.setObjectName("layout_ending_v")
-        spacerItem25 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_ending_v.addItem(spacerItem25)
         self.checkbox_ending_v = QtWidgets.QCheckBox(self)
         self.checkbox_ending_v.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.checkbox_ending_v.setFont(get_font(self.main_font_size))
         self.checkbox_ending_v.setObjectName("checkbox_ending_v")
-        self.layout_ending_v.addWidget(self.checkbox_ending_v)
-        spacerItem26 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_ending_v.addItem(spacerItem26)
-        self.layout_main.addLayout(self.layout_ending_v)
+        self.layout_ending_j.addWidget(self.checkbox_ending_v)
+        spacerItem24 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_ending_j.addItem(spacerItem24)
+        self.layout_main.addLayout(self.layout_ending_j)
 
         # add y as a consonant
         self.layout_y_consonant = QtWidgets.QHBoxLayout()
@@ -361,7 +352,7 @@ class TuningDialog(QtWidgets.QDialog):
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslate_ui(self):
-        log.trace(f"Entered: TuningDialog.{self.retranslate_ui.__name__}")
+        log.trace(f"Entered: TuningDialog.{func_name()}")
         _translate = QtCore.QCoreApplication.translate
         window_title = "Tuning"
         self.setWindowTitle(_translate(window_title, window_title))
@@ -394,12 +385,12 @@ class TuningDialog(QtWidgets.QDialog):
 
         # enforcers
         self.header_enforcers.setText(_translate(window_title, "Enforcers"))
-        self.checkbox_beginning_double.setText(_translate(window_title, "Beginning: No double letters"))
-        self.checkbox_ending_j.setText(_translate(window_title, "Ending: No \"J\"s"))
-        self.checkbox_ending_v.setText(_translate(window_title, "Ending: No \"V\"s"))
+        self.checkbox_beginning_double.setText(_translate(window_title, "Beginning: No Double Letters"))
+        self.checkbox_ending_j.setText(_translate(window_title, "Ending: No Js"))
+        self.checkbox_ending_v.setText(_translate(window_title, "No Vs"))
         self.checkbox_ending_double.setText(_translate(window_title, "Ending: Double F/L/S/Ts"))
-        self.checkbox_beginning_ending_y.setText(_translate(window_title, "Beginning/Ending: \"Y\" Bias"))
-        self.checkbox_y_consonant.setText(_translate(window_title, "Include \"Y\" as Consonant"))
+        self.checkbox_beginning_ending_y.setText(_translate(window_title, "Beginning/Ending: Y Bias"))
+        self.checkbox_y_consonant.setText(_translate(window_title, "Include Y as Consonant"))
 
         # import/export
         self.header_import_export.setText(_translate(window_title, "Tuning Batch Importing/Exporting"))
@@ -414,7 +405,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.initialize_tunings()
 
     def set_shading(self):
-        log.trace(f"Entered: TuningDialog.{self.set_shading.__name__}")
+        log.trace(f"Entered: TuningDialog.{func_name()}")
         inset_border = get_border(Border.INSET, self.mode)
 
         self.setStyleSheet("QDialog {\n"
@@ -435,7 +426,7 @@ class TuningDialog(QtWidgets.QDialog):
                            "}")
 
     def initialize_tunings(self):
-        log.trace(f"Entered: TuningDialog.{self.initialize_tunings.__name__}")
+        log.trace(f"Entered: TuningDialog.{func_name()}")
 
         # first, chances
         self.slider_rare.setValue(self.gen.rare_chance)
@@ -467,7 +458,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.label_xs.setText(f"Xs Replace ({self.slider_xs.value()}%)")
 
     def pressed_import(self) -> None:
-        log.trace(f"Entered: TuningDialog.{self.pressed_import.__name__}")
+        log.trace(f"Entered: TuningDialog.{func_name()}")
 
         # setup the file dialog
         file_dialog = QtWidgets.QFileDialog()
@@ -488,7 +479,7 @@ class TuningDialog(QtWidgets.QDialog):
             log.warning("No settings file chosen.")
 
     def pressed_export(self) -> None:
-        log.trace(f"Entered: TuningDialog.{self.pressed_export.__name__}")
+        log.trace(f"Entered: TuningDialog.{func_name()}")
 
         # save to file
         tuning_path = 'tuning.ini'
@@ -496,7 +487,7 @@ class TuningDialog(QtWidgets.QDialog):
         self.gen.tuning.export_tuning(Path(tuning_path))
 
     def pressed_save(self) -> None:
-        log.trace(f"Entered: TuningDialog.{self.pressed_save.__name__}")
+        log.trace(f"Entered: TuningDialog.{func_name()}")
 
         # update generator chances
         self.gen.rare_chance = self.slider_rare.value()
@@ -517,5 +508,5 @@ class TuningDialog(QtWidgets.QDialog):
         self.done(0)
 
     def pressed_cancel(self) -> None:
-        log.trace(f"Entered: TuningDialog.{self.pressed_cancel.__name__}")
+        log.trace(f"Entered: TuningDialog.{func_name()}")
         self.done(1)

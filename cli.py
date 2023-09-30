@@ -13,7 +13,7 @@ from src.utils import add_log_level
 
 # PROJECT CONSTANTS
 BUILD_CONFIG_PATH, RUN_CONFIG_PATH = 'settings.ini', 'data/settings.ini'
-CONFIG_PATH = Path(BUILD_CONFIG_PATH)
+CONFIG_PATH = Path(RUN_CONFIG_PATH)
 add_log_level('TRACE', log.DEBUG - 5)
 LOG_LEVEL = log.DEBUG
 VERSION = 'v1.1'

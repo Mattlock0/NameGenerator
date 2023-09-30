@@ -14,7 +14,7 @@ from src.utils import *
 
 # consts
 MAX_NAME_GEN = 40
-DEFAULT_NUM_NAMES = 1
+DEFAULT_NUM_NAMES = 7
 ARCHIVE_PATH = "data/generated_names.txt"
 
 

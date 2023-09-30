@@ -8,13 +8,17 @@ from src.utils import *
 
 LITERAL_SYMBOLS = ['\\', '/', '|', '$', '@']
 CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'r', 's', 't', 'v', 'w']
-RARE_CONSONANTS = {'p': 252, 'z': 191, 'x': 71, 'q': 61}  # 'y': 35
+RARE_CONSONANTS = {'p': 252, 'z': 191, 'x': 71, 'q': 61}  # q should be quite low because by itself it appeared thrice
 DIAGRAPHS = {'sh': 275, 'th': 219, 'ch': 185, 'ck': 77, 'ph': 71, 'qu': 58, 'ng': 58}
 DOUBLE_CONSONANTS = {'ll': 398, 'nn': 310, 'tt': 199, 'rr': 157, 'ss': 126, 'mm': 44, 'dd': 31, 'ff': 29, 'bb': 27}
+COMMON_CONSONANT_PAIRS = {'nd': 249, 'st': 238, 'ly': 193, 'rl': 190, 'br': 142, 'rt': 139, 'yl': 139, 'rd': 134}
+
 VOWELS = ['a', 'e', 'i', 'o', 'u', 'y']
 DOUBLE_VOWELS = {'ee': 152, 'oo': 28, 'aa': 15}
+COMMON_VOWEL_PAIRS = {'ie': 586, 'ia': 369, 'ey': 193, 'ay': 180, 'ea': 157, 'ai': 143, 'au': 105, 'io': 99, 'eo': 80}
 
-ALL_SYMBOLS = [CONSONANTS, RARE_CONSONANTS, DIAGRAPHS, DOUBLE_CONSONANTS, VOWELS, DOUBLE_VOWELS]
+ALL_SYMBOLS = [CONSONANTS, RARE_CONSONANTS, DIAGRAPHS, DOUBLE_CONSONANTS, COMMON_CONSONANT_PAIRS, VOWELS, DOUBLE_VOWELS,
+               COMMON_VOWEL_PAIRS]
 
 
 class Symbols(IntEnum):
@@ -22,14 +26,17 @@ class Symbols(IntEnum):
     RARE_CONSONANT = 1
     DIAGRAPH = 2
     DOUBLE_CONSONANT = 3
-    VOWEL = 4
-    DOUBLE_VOWEL = 5
+    COMMON_CONSONANT_PAIR = 4
+    VOWEL = 5
+    DOUBLE_VOWEL = 6
+    COMMON_VOWEL_PAIR = 7
 
 
 class Generator:
     def __init__(self):
+        self.template = Iterator([])
         self.tuning = Tuning()
-        self.template = None
+        self.double_flag = False
 
         # chances
         self.rare_chance, self.diagraph_chance, self.double_chance, self.common_chance, self.qu_chance, self.xs_chance \
@@ -65,10 +72,9 @@ class Generator:
         weighted_symbol_dict = {Symbols.CONSONANT: consonant_chance, Symbols.RARE_CONSONANT: self.rare_chance,
                                 Symbols.DIAGRAPH: self.diagraph_chance, Symbols.DOUBLE_CONSONANT: self.double_chance}
 
-        # check for beginning enforcers
-        if not self.template.has_prev():
-            if self.beginning_double:
-                del weighted_symbol_dict[Symbols.DOUBLE_CONSONANT]
+        # check for beginning enforcers or whether we've already generated double letters this name
+        if not self.template.has_prev() and self.beginning_double or self.double_flag:
+            del weighted_symbol_dict[Symbols.DOUBLE_CONSONANT]
 
         # add y as a consonant if checked
         if self.y_consonant:
@@ -77,13 +83,19 @@ class Generator:
             if 'y' in RARE_CONSONANTS.keys():
                 del RARE_CONSONANTS['y']
 
+        # see if we can generate a common pair
+        if self.template.get_next() == 'c':
+            weighted_symbol_dict[Symbols.COMMON_CONSONANT_PAIR] = self.common_chance
+
         # choose one generation type based on weights
         symbol_type = weighted_choice(weighted_symbol_dict)
 
-        if not self.template.has_prev():
-            if self.beginning_double:
-                if symbol_type == Symbols.DOUBLE_CONSONANT:
-                    log.error("Bogus, man!")
+        # if we chose a pair, move the marker up twice
+        if symbol_type == Symbols.COMMON_CONSONANT_PAIR:
+            log.debug('Generating a common pair...')
+            self.template.next()
+        elif symbol_type == Symbols.DOUBLE_CONSONANT:
+            self.double_flag = True
 
         # generate a consonant of that type
         return weighted_choice(ALL_SYMBOLS[symbol_type])
@@ -94,13 +106,24 @@ class Generator:
         vowel_chance = 100 - self.double_chance
         weighted_symbol_dict = {Symbols.VOWEL: vowel_chance, Symbols.DOUBLE_VOWEL: self.double_chance}
 
-        # check for beginning enforcers
-        if not self.template.has_prev():
-            if self.beginning_double:
-                del weighted_symbol_dict[Symbols.DOUBLE_VOWEL]
+        # check for beginning enforcers or whether we've already generated double letters this name
+        if not self.template.has_prev() and self.beginning_double or self.double_flag:
+            del weighted_symbol_dict[Symbols.DOUBLE_VOWEL]
+            weighted_symbol_dict[Symbols.VOWEL] = 100
+
+        # see if we can generate a common pair
+        if self.template.get_next() == 'v':
+            weighted_symbol_dict[Symbols.COMMON_VOWEL_PAIR] = self.common_chance
 
         # choose one generation type based on weights
         symbol_type = weighted_choice(weighted_symbol_dict)
+
+        # if we chose a pair, move the marker up twice
+        if symbol_type == Symbols.COMMON_VOWEL_PAIR:
+            log.debug('Generating a common pair...')
+            self.template.next()
+        elif symbol_type == Symbols.DOUBLE_VOWEL:
+            self.double_flag = True
 
         # generate a vowel of that type
         return weighted_choice(ALL_SYMBOLS[symbol_type])
@@ -119,7 +142,6 @@ class Generator:
                 return self.template.curr()
 
         template_letter = self.template.curr()
-        log.trace(f"Template progress: {self.template}")
 
         if template_letter.lower() == 'c':
             generated_symbol = self.generate_consonant()
@@ -130,7 +152,6 @@ class Generator:
         else:  # no template letter was passed in; generate nothing
             generated_symbol = template_letter
 
-        self.template.next()
         if template_letter.isupper():
             return generated_symbol.title()
         else:
@@ -138,11 +159,17 @@ class Generator:
 
     def generate_name(self, template_raw: str):
         log.trace(f"Entered: Generator.{func_name()}")
-        self.template = Iterator([*template_raw])
+        self.template, self.double_flag = Iterator([*template_raw]), False
         name = ""
 
-        while self.template.has_next():
+        # currently making a name that is one letter short...
+        while True:
+            log.trace(f"Template progress: {self.template}")
             name += self.generate_letter()
+
+            if not self.template.has_next():
+                break
+            self.template.next()
 
         return name  # would pass in name to process_name here
 
