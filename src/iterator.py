@@ -1,5 +1,3 @@
-import logging as log
-
 class Iterator(object):
     def __init__(self, collection):
         self.collection = collection

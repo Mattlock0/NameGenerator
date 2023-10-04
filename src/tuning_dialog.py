@@ -1,6 +1,5 @@
 # system imports
 from pathlib import Path
-import math
 
 # qt imports
 from PyQt5 import QtCore, QtWidgets
