@@ -39,12 +39,11 @@ class Generator:
         self.double_flag = False
 
         # chances
-        self.rare_chance, self.diagraph_chance, self.double_chance, self.common_chance, self.qu_chance, self.xs_chance \
-            = 0, 0, 0, 0, 0, 0
+        self.rare_chance, self.diagraph_chance, self.double_chance, self.common_chance = 0, 0, 0, 0
 
         # enforcers
         (self.beginning_double, self.ending_j, self.ending_v, self.ending_double, self.beginning_ending_y,
-         self.y_consonant) = False, False, False, False, False, False
+         self.y_consonant, self.qu_replace, self.xs_replace) = False, False, False, False, False, False, False, False
 
         self.read_tunings()
 
@@ -54,8 +53,6 @@ class Generator:
         self.diagraph_chance = self.tuning.get_chance('diagraph')
         self.double_chance = self.tuning.get_chance('double')
         self.common_chance = self.tuning.get_chance('common')
-        self.qu_chance = self.tuning.get_chance('qu')
-        self.xs_chance = self.tuning.get_chance('xs')
 
         # enforcers
         self.beginning_double = self.tuning.get_enforcer('b_double')
@@ -64,6 +61,8 @@ class Generator:
         self.ending_double = self.tuning.get_enforcer('e_double')
         self.beginning_ending_y = self.tuning.get_enforcer('b_e_y')
         self.y_consonant = self.tuning.get_enforcer('y_conso')
+        self.qu_replace = self.tuning.get_enforcer('qu')
+        self.xs_replace = self.tuning.get_enforcer('xs')
 
     def generate_consonant(self) -> str:
         log.trace(f"Entered: Generator.{func_name()}")
@@ -162,7 +161,6 @@ class Generator:
         self.template, self.double_flag = Iterator([*template_raw]), False
         name = ""
 
-        # currently making a name that is one letter short...
         while True:
             log.trace(f"Template progress: {self.template}")
             name += self.generate_letter()
@@ -171,18 +169,31 @@ class Generator:
                 break
             self.template.next()
 
-        return name  # would pass in name to process_name here
+        return self.process_name(name)  # would pass in name to process_name here
 
     def process_name(self, name):
         log.trace(f"Entered: Generator.{func_name()}")
-        processed_name = ""
-        # check for strange letter combinations here (qu must go together, Lr is odd)
-        if "q" in name and "qu" not in name:
-            if random.randrange(100) < self.qu_chance:
-                processed_name = name.replace("q", "qu")
-            else:
-                processed_name = name.replace("q", self.generate_vowel())
-                while "q" in processed_name:
-                    processed_name = name.replace("q", self.generate_vowel())
+        proc_name = list(name)
 
-        return processed_name
+        # add a chance to add a vowel onto the end
+        if self.ending_j or self.ending_v:
+            while self.ending_j and proc_name[-1] == 'j' or self.ending_v and proc_name[-1] == 'v':
+                log.debug(f"Replacing ending from {name}")
+                generated = self.generate_consonant()
+                log.debug(f"Replacement: {generated}")
+                proc_name[-1] = generated
+
+        proc_name = "".join(proc_name)
+
+        # check for strange letter combinations here (qu must go together, Lr is odd)
+        if self.qu_replace and "q" in proc_name and "qu" not in proc_name:
+            # check for a u after any qs
+            proc_name = proc_name.replace('q', 'qu')
+
+        # allow for the chance to replace q with a different consonant
+        # if random.randrange(100) < 50:
+        #     processed_name = name.replace("q", self.generate_consonant())
+        #     while "q" in processed_name:
+        #         processed_name = name.replace("q", self.generate_consonant())
+
+        return "".join(proc_name)

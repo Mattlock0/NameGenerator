@@ -27,10 +27,6 @@ class Symbols(IntEnum):
     DOUBLE_VOWEL = 5
 
 
-def cut_tuple(tuple_list, index):
-    return list(map(lambda x: x[index], tuple_list))
-
-
 def random_choice(choices):
     if type(choices) == list:
         return random.choice(choices)

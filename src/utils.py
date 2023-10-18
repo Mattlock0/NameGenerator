@@ -87,6 +87,10 @@ def func_name():
     return inspect.currentframe().f_back.f_code.co_name
 
 
+def reduce_tuple(tuple_list, index):
+    return list(map(lambda x: x[index], tuple_list))
+
+
 def add_log_level(level_name, level_num, method_name=None):
     """
     Comprehensively adds a new logging level to the `logging` module and the

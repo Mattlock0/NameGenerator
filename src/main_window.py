@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QMessageBox
 # project imports
 from src.settings_dialog import SettingsDialog
 from src.tuning_dialog import TuningDialog
-from src.generator_v3 import Generator
+from src.generators.generator_v3 import Generator
 from src.settings import Settings
 from src.utils import *
 

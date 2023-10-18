@@ -5,7 +5,7 @@ from pathlib import Path
 from PyQt5 import QtCore, QtWidgets
 
 # project imports
-from src.generator_v3 import Generator
+from src.generators.generator_v3 import Generator
 from src.utils import *
 
 
@@ -134,69 +134,6 @@ class TuningDialog(QtWidgets.QDialog):
         self.layout_line_1.addItem(spacerItem14)
         self.layout_main.addLayout(self.layout_line_1)
 
-        # HEADER: Letter Replacement
-        self.header_replacement = QtWidgets.QLabel(self)
-        self.header_replacement.setAlignment(QtCore.Qt.AlignCenter)
-        self.header_replacement.setFont(get_font(self.header_font_size))
-        self.header_replacement.setObjectName("header_replacement")
-        self.layout_main.addWidget(self.header_replacement)
-
-        # qu replacement
-        self.layout_qu = QtWidgets.QHBoxLayout()
-        self.layout_qu.setObjectName("layout_qu")
-        spacerItem15 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_qu.addItem(spacerItem15)
-        self.label_qu = QtWidgets.QLabel(self)
-        self.label_qu.setFont(get_font(self.main_font_size))
-        self.label_qu.setObjectName("label_qu")
-        self.layout_qu.addWidget(self.label_qu)
-        self.slider_qu = QtWidgets.QSlider(self)
-        self.slider_qu.setOrientation(QtCore.Qt.Horizontal)
-        self.slider_qu.setMinimum(0)
-        self.slider_qu.setMaximum(100)
-        self.slider_qu.valueChanged.connect(self.update_percents)
-        self.slider_qu.setObjectName("slider_qu")
-        self.layout_qu.addWidget(self.slider_qu)
-        spacerItem16 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_qu.addItem(spacerItem16)
-        self.layout_main.addLayout(self.layout_qu)
-
-        # xs replacement
-        self.layout_xs = QtWidgets.QHBoxLayout()
-        self.layout_xs.setObjectName("layout_xs")
-        spacerItem17 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_xs.addItem(spacerItem17)
-        self.label_xs = QtWidgets.QLabel(self)
-        self.label_xs.setFont(get_font(self.main_font_size))
-        self.label_xs.setObjectName("label_xs")
-        self.layout_xs.addWidget(self.label_xs)
-        self.slider_xs = QtWidgets.QSlider(self)
-        self.slider_xs.setOrientation(QtCore.Qt.Horizontal)
-        self.slider_xs.setMinimum(0)
-        self.slider_xs.setMaximum(100)
-        self.slider_xs.valueChanged.connect(self.update_percents)
-        self.slider_xs.setObjectName("slider_xs")
-        self.layout_xs.addWidget(self.slider_xs)
-        spacerItem18 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_xs.addItem(spacerItem18)
-        self.layout_main.addLayout(self.layout_xs)
-
-        # spacer line 2
-        self.layout_line_2 = QtWidgets.QHBoxLayout()
-        self.layout_line_2.setObjectName("layout_line_2")
-        spacerItem19 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_line_2.addItem(spacerItem19)
-        self.line_2 = QtWidgets.QFrame(self)
-        self.line_2.setMinimumSize(QtCore.QSize(300, 0))
-        self.line_2.setMaximumSize(QtCore.QSize(500, 16777215))
-        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_2.setObjectName("line_2")
-        self.layout_line_2.addWidget(self.line_2)
-        spacerItem20 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_line_2.addItem(spacerItem20)
-        self.layout_main.addLayout(self.layout_line_2)
-
         # HEADER: Enforcers
         self.header_enforcers = QtWidgets.QLabel(self)
         self.header_enforcers.setAlignment(QtCore.Qt.AlignCenter)
@@ -279,21 +216,49 @@ class TuningDialog(QtWidgets.QDialog):
         self.layout_y_consonant.addItem(spacerItem12)
         self.layout_main.addLayout(self.layout_y_consonant)
 
-        # spacer line 3
-        self.layout_line_3 = QtWidgets.QHBoxLayout()
-        self.layout_line_3.setObjectName("layout_line_3")
-        spacerItem31 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_line_3.addItem(spacerItem31)
-        self.line_3 = QtWidgets.QFrame(self)
-        self.line_3.setMinimumSize(QtCore.QSize(300, 0))
-        self.line_3.setMaximumSize(QtCore.QSize(500, 16777215))
-        self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_3.setObjectName("line_3")
-        self.layout_line_3.addWidget(self.line_3)
-        spacerItem32 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.layout_line_3.addItem(spacerItem32)
-        self.layout_main.addLayout(self.layout_line_3)
+        # qu replacement
+        self.layout_qu = QtWidgets.QHBoxLayout()
+        self.layout_qu.setObjectName("layout_qu")
+        spacerItem15 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_qu.addItem(spacerItem15)
+        self.checkbox_qu = QtWidgets.QCheckBox(self)
+        self.checkbox_qu.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.checkbox_qu.setFont(get_font(self.main_font_size))
+        self.checkbox_qu.setObjectName("checkbox_qu")
+        self.layout_qu.addWidget(self.checkbox_qu)
+        spacerItem16 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_qu.addItem(spacerItem16)
+        self.layout_main.addLayout(self.layout_qu)
+
+        # xs replacement
+        self.layout_xs = QtWidgets.QHBoxLayout()
+        self.layout_xs.setObjectName("layout_xs")
+        spacerItem17 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_xs.addItem(spacerItem17)
+        self.checkbox_xs = QtWidgets.QCheckBox(self)
+        self.checkbox_xs.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.checkbox_xs.setFont(get_font(self.main_font_size))
+        self.checkbox_xs.setObjectName("checkbox_xs")
+        self.layout_xs.addWidget(self.checkbox_xs)
+        spacerItem18 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_xs.addItem(spacerItem18)
+        self.layout_main.addLayout(self.layout_xs)
+
+        # spacer line 2
+        self.layout_line_2 = QtWidgets.QHBoxLayout()
+        self.layout_line_2.setObjectName("layout_line_2")
+        spacerItem19 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_line_2.addItem(spacerItem19)
+        self.line_2 = QtWidgets.QFrame(self)
+        self.line_2.setMinimumSize(QtCore.QSize(300, 0))
+        self.line_2.setMaximumSize(QtCore.QSize(500, 16777215))
+        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
+        self.layout_line_2.addWidget(self.line_2)
+        spacerItem20 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.layout_line_2.addItem(spacerItem20)
+        self.layout_main.addLayout(self.layout_line_2)
 
         # HEADER: Import/Export
         self.header_import_export = QtWidgets.QLabel(self)
@@ -360,15 +325,11 @@ class TuningDialog(QtWidgets.QDialog):
         diagraph_text = "Diagraph Chance"
         double_text = "Double Letter Chance"
         common_text = "Common Pairs Chance"
-        qu_text = "Qu Replace"
-        xs_text = "Xs Replace"
 
         self.set_min(self.label_rare, rare_text)
         self.set_min(self.label_diagraph, diagraph_text)
         self.set_min(self.label_double, double_text)
         self.set_min(self.label_common, common_text)
-        self.set_min(self.label_qu, qu_text)
-        self.set_min(self.label_xs, xs_text)
 
         # letter generation
         self.header_letter_gen.setText(_translate(window_title, "Letter Generation"))
@@ -376,11 +337,6 @@ class TuningDialog(QtWidgets.QDialog):
         self.label_diagraph.setText(_translate(window_title, f"{diagraph_text} ({self.slider_diagraph.value()}%)"))
         self.label_double.setText(_translate(window_title, f"{double_text} ({self.slider_double.value()}%)"))
         self.label_common.setText(_translate(window_title, f"{common_text} ({self.slider_common.value()}%)"))
-
-        # replacement
-        self.header_replacement.setText(_translate(window_title, "Pair Replacement"))
-        self.label_qu.setText(_translate(window_title, f"Qu Replace ({self.slider_qu.value()}%)"))
-        self.label_xs.setText(_translate(window_title, f"Xs Replace ({self.slider_xs.value()}%)"))
 
         # enforcers
         self.header_enforcers.setText(_translate(window_title, "Enforcers"))
@@ -390,6 +346,8 @@ class TuningDialog(QtWidgets.QDialog):
         self.checkbox_ending_double.setText(_translate(window_title, "Ending: Double F/L/S/Ts"))
         self.checkbox_beginning_ending_y.setText(_translate(window_title, "Beginning/Ending: Y Bias"))
         self.checkbox_y_consonant.setText(_translate(window_title, "Include Y as Consonant"))
+        self.checkbox_qu.setText(_translate(window_title, f"Replace Q Without U"))
+        self.checkbox_xs.setText(_translate(window_title, f"Replace XS"))
 
         # import/export
         self.header_import_export.setText(_translate(window_title, "Tuning Batch Importing/Exporting"))
@@ -432,8 +390,6 @@ class TuningDialog(QtWidgets.QDialog):
         self.slider_diagraph.setValue(self.gen.diagraph_chance)
         self.slider_double.setValue(self.gen.double_chance)
         self.slider_common.setValue(self.gen.common_chance)
-        self.slider_qu.setValue(self.gen.qu_chance)
-        self.slider_xs.setValue(self.gen.xs_chance)
 
         # then the enforcers
         self.checkbox_beginning_double.setChecked(self.gen.beginning_double)
@@ -442,6 +398,8 @@ class TuningDialog(QtWidgets.QDialog):
         self.checkbox_ending_double.setChecked(self.gen.ending_double)
         self.checkbox_beginning_ending_y.setChecked(self.gen.beginning_ending_y)
         self.checkbox_y_consonant.setChecked(self.gen.y_consonant)
+        self.checkbox_qu.setChecked(self.gen.qu_replace)
+        self.checkbox_xs.setChecked(self.gen.xs_replace)
 
     def set_min(self, label: QtWidgets.QLabel, text: str) -> None:
         max_percent = " (100%)"
@@ -453,8 +411,6 @@ class TuningDialog(QtWidgets.QDialog):
         self.label_diagraph.setText(f"Diagraph Chance ({self.slider_diagraph.value()}%)")
         self.label_double.setText(f"Double Letter Chance ({self.slider_double.value()}%)")
         self.label_common.setText(f"Common Pairs Chance ({self.slider_common.value()}%)")
-        self.label_qu.setText(f"Qu Replace ({self.slider_qu.value()}%)")
-        self.label_xs.setText(f"Xs Replace ({self.slider_xs.value()}%)")
 
     def pressed_import(self) -> None:
         log.trace(f"Entered: TuningDialog.{func_name()}")
@@ -493,8 +449,6 @@ class TuningDialog(QtWidgets.QDialog):
         self.gen.diagraph_chance = self.slider_diagraph.value()
         self.gen.double_chance = self.slider_double.value()
         self.gen.common_chance = self.slider_common.value()
-        self.gen.qu_chance = self.slider_qu.value()
-        self.gen.xs_chance = self.slider_xs.value()
 
         # update enforcers
         self.gen.beginning_double = self.checkbox_beginning_double.isChecked()
@@ -503,6 +457,8 @@ class TuningDialog(QtWidgets.QDialog):
         self.gen.ending_double = self.checkbox_ending_double.isChecked()
         self.gen.beginning_ending_y = self.checkbox_beginning_ending_y.isChecked()
         self.gen.y_consonant = self.checkbox_y_consonant.isChecked()
+        self.gen.qu_replace = self.checkbox_qu.isChecked()
+        self.gen.xs_replace = self.checkbox_xs.isChecked()
 
         self.done(0)
 
