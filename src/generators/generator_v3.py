@@ -85,6 +85,7 @@ class Generator:
         # see if we can generate a common pair
         if self.template.get_next() == 'c':
             weighted_symbol_dict[Symbols.COMMON_CONSONANT_PAIR] = self.common_chance
+            weighted_symbol_dict[Symbols.CONSONANT] = consonant_chance + (100 - self.common_chance)
 
         # choose one generation type based on weights
         symbol_type = weighted_choice(weighted_symbol_dict)
@@ -113,6 +114,7 @@ class Generator:
         # see if we can generate a common pair
         if self.template.get_next() == 'v':
             weighted_symbol_dict[Symbols.COMMON_VOWEL_PAIR] = self.common_chance
+            weighted_symbol_dict[Symbols.CONSONANT] = vowel_chance + (100 - self.common_chance)
 
         # choose one generation type based on weights
         symbol_type = weighted_choice(weighted_symbol_dict)
@@ -173,27 +175,37 @@ class Generator:
 
     def process_name(self, name):
         log.trace(f"Entered: Generator.{func_name()}")
-        proc_name = list(name)
-
-        # add a chance to add a vowel onto the end
-        if self.ending_j or self.ending_v:
-            while self.ending_j and proc_name[-1] == 'j' or self.ending_v and proc_name[-1] == 'v':
-                log.debug(f"Replacing ending from {name}")
-                generated = self.generate_consonant()
-                log.debug(f"Replacement: {generated}")
-                proc_name[-1] = generated
-
-        proc_name = "".join(proc_name)
+        proc_name = name
 
         # check for strange letter combinations here (qu must go together, Lr is odd)
-        if self.qu_replace and "q" in proc_name and "qu" not in proc_name:
-            # check for a u after any qs
-            proc_name = proc_name.replace('q', 'qu')
+        if self.qu_replace:
+            while "q" in proc_name and "qu" not in proc_name:
+                if random.randrange(100) < 50:
+                    # add a u after any qs
+                    proc_name = proc_name.replace('q', 'qu')
+                else:
+                    # or, just replace q with another consonant
+                    proc_name = proc_name.replace('q', self.generate_consonant())
 
-        # allow for the chance to replace q with a different consonant
-        # if random.randrange(100) < 50:
-        #     processed_name = name.replace("q", self.generate_consonant())
-        #     while "q" in processed_name:
-        #         processed_name = name.replace("q", self.generate_consonant())
+        if self.xs_replace:
+            while "xs" in proc_name:
+                if random.randrange(100) < 50:
+                    proc_name = proc_name.replace('xs', self.generate_consonant() + self.generate_consonant())
+                else:
+                    proc_name = proc_name.replace('xs', 'x' + self.generate_vowel())  # maybe a consonant instead?
+
+        # convert name to a list
+        proc_name = list(proc_name)
+
+        # add a chance to add a vowel onto the end
+        while self.ending_j and proc_name[-1] == 'j' or self.ending_v and proc_name[-1] == 'v':
+            log.debug(f"Replacing ending from {proc_name}")
+            generated = self.generate_consonant()
+            log.debug(f"Replacement: {generated}")
+            proc_name[-1] = generated
+        if self.ending_j or self.ending_v:
+            pass
+
+        proc_name = "".join(proc_name)
 
         return "".join(proc_name)
