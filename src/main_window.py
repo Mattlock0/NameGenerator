@@ -31,7 +31,6 @@ class MainWindow(object):
         self.archive = False
 
         # extra class elements
-        self.settings_window = QtWidgets.QMainWindow()
         self.version = version
 
     def setup_ui(self, main_window: QtWidgets.QMainWindow):

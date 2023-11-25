@@ -24,7 +24,7 @@ class Border(IntEnum):
 def weighted_choice(choices):
     log.trace(f"Entered: utils.{func_name()}")
 
-    if type(choices) == list:
+    if type(choices) is list:
         return random.choice(choices)
     return random.choices(list(choices.keys()), weights=list(choices.values()), k=1)[0]
 

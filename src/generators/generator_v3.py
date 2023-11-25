@@ -10,7 +10,7 @@ DIAGRAPHS = {'sh': 275, 'th': 219, 'ch': 185, 'ck': 77, 'ph': 71, 'qu': 58, 'ng'
 DOUBLE_CONSONANTS = {'ll': 398, 'nn': 310, 'tt': 199, 'rr': 157, 'ss': 126, 'mm': 44, 'dd': 31, 'ff': 29, 'bb': 27}
 COMMON_CONSONANT_PAIRS = {'nd': 249, 'st': 238, 'ly': 193, 'rl': 190, 'br': 142, 'rt': 139, 'rd': 134, 'nt': 130,
                           'rn': 107, 'ld': 96, 'dr': 96, 'tr': 88, 'nc': 83, 'cl': 78, 'fr': 62, 'rm': 57, 'lm': 56,
-                          'rg': 56, 'lv': 55}
+                          'rg': 56, 'lv': 55}  # should ly really be in here?
 
 VOWELS = ['a', 'e', 'i', 'o', 'u', 'y']
 DOUBLE_VOWELS = {'ee': 152, 'oo': 28, 'aa': 15}
@@ -75,9 +75,22 @@ class Generator:
         if not self.template.has_prev() and self.beginning_double or self.double_flag:
             del weighted_symbol_dict[Symbols.DOUBLE_CONSONANT]
 
+        if not self.template.has_prev() and self.beginning_ending_y and self.y_consonant:
+            if weighted_choice({'': 65, 'y': 35}) == 'y':
+                # force generate a y at the end
+                log.debug("Generating beginning y...")
+                return 'y'
+
+        # check for ending enforcers
+        if not self.template.has_next() and self.beginning_ending_y and self.y_consonant:
+            if weighted_choice({'': 65, 'y': 35}) == 'y':
+                # force generate a y at the end
+                log.debug("Generating ending y...")
+                return 'y'
+
         # add y as a consonant if checked
         if self.y_consonant:
-            RARE_CONSONANTS['y'] = 35
+            RARE_CONSONANTS['y'] = 35  # avoid magic numbers; pull this from a dict somewhere
         else:
             if 'y' in RARE_CONSONANTS.keys():
                 del RARE_CONSONANTS['y']
@@ -110,6 +123,19 @@ class Generator:
         if not self.template.has_prev() and self.beginning_double or self.double_flag:
             del weighted_symbol_dict[Symbols.DOUBLE_VOWEL]
             weighted_symbol_dict[Symbols.VOWEL] = 100
+
+        if not self.template.has_prev() and self.beginning_ending_y:
+            if weighted_choice({'': 65, 'y': 35}) == 'y':
+                # force generate a y at the end
+                log.debug("Generating beginning y...")
+                return 'y'
+
+        # check for ending enforcers
+        if not self.template.has_next() and self.beginning_ending_y:
+            if weighted_choice({'': 65, 'y': 35}) == 'y':
+                # force generate a y at the end
+                log.debug("Generating ending y...")
+                return 'y'
 
         # see if we can generate a common pair
         if self.template.get_next() == 'v':
@@ -199,13 +225,10 @@ class Generator:
 
         # add a chance to add a vowel onto the end
         while self.ending_j and proc_name[-1] == 'j' or self.ending_v and proc_name[-1] == 'v':
-            log.debug(f"Replacing ending from {proc_name}")
+            log.debug(f"Replacing ending from {''.join(proc_name)}")
             generated = self.generate_consonant()
-            log.debug(f"Replacement: {generated}")
             proc_name[-1] = generated
         if self.ending_j or self.ending_v:
             pass
-
-        proc_name = "".join(proc_name)
 
         return "".join(proc_name)
