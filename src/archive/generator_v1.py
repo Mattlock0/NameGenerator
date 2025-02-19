@@ -58,10 +58,10 @@ class GeneratorV1:
 
     def generate_letter(self, let):
         if let == "\\" or let == "/":  # check for literal slashes
-            literal_flag = True  # if so, set the flag to True
+            self.literal_flag = True  # if so, set the flag to True
             return ""
         elif self.literal_flag:  # we just read in a slash
-            literal_flag = False
+            self.literal_flag = False
             return let  # return the letter literally
 
         if let.lower() == 'c':  # we need to generate a consonant

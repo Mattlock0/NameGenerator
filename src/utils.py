@@ -23,7 +23,7 @@ class Border(IntEnum):
 
 def random_choice(choices):
     log.trace(f"Entered: utils.{func_name()}")
-    if type(choices) == list:
+    if type(choices) is list:
         return random.choice(choices)
     return random.choices(list(choices.keys()), weights=list(choices.values()), k=1)[0]
 
@@ -56,6 +56,7 @@ def get_border(border_type: Border, shading: Mode) -> str:
                 f"border-radius: 5px; "
                 f"border-top: 1px solid {shading.light_border}; border-left: 1px solid {shading.light_border}; border"
                 f"-right: 3px solid {shading.border}; border-bottom: 3px solid {shading.border}\n")
+    return ""
 
 
 def style_button(shading: Mode) -> str:

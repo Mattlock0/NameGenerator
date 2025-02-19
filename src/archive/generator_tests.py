@@ -32,7 +32,7 @@ def cut_tuple(tuple_list, index):
 
 
 def random_choice(choices):
-    if type(choices) == list:
+    if type(choices) is list:
         return random.choice(choices)
     return random.choices(list(choices.keys()), weights=list(choices.values()), k=1)[0]
 

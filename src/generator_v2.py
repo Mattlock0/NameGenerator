@@ -1,10 +1,12 @@
 # system imports
 from pathlib import Path
+from enum import IntEnum
+from random import random
 
 # project imports
 from src.iterator import Iterator
 from src.tuning import Tuning
-from src.utils import *
+from src.utils import log, func_name, random_choice
 
 LITERAL_SYMBOLS = ['\\', '/', '|', '$', '@']
 CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'r', 's', 't', 'v', 'w']

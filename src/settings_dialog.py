@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 # project imports
 from src.settings import Settings
-from src.utils import *
+from src.utils import Mode, get_font, log, func_name, get_border, Border, style_button, LIGHTMODE, DARKMODE
 
 
 class SettingsDialog(QtWidgets.QDialog):
@@ -231,7 +231,7 @@ class SettingsDialog(QtWidgets.QDialog):
         # show a message to the user about the missing settings file
         config_generation = QMessageBox()
         config_generation.setWindowTitle("No File Found!")
-        config_generation.setText(f"No settings.ini found! Would you like to generate one?")
+        config_generation.setText("No settings.ini found! Would you like to generate one?")
         config_generation.setInformativeText("(In the same directory as the executable)")
         config_generation.setFont(get_font(self.font_size))
         config_generation.setIcon(QMessageBox.Warning)
