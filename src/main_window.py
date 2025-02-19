@@ -259,4 +259,4 @@ class MainWindow(object):
 
         about.setStyleSheet(f"background-color: {shading.background}; color: {shading.text}\n")
 
-        x = about.exec_()
+        _ = about.exec_()

@@ -231,7 +231,7 @@ class SettingsDialog(QtWidgets.QDialog):
         # show a message to the user about the missing settings file
         config_generation = QMessageBox()
         config_generation.setWindowTitle("No File Found!")
-        config_generation.setText(f"No settings.ini found! Would you like to generate one?")
+        config_generation.setText("No settings.ini found! Would you like to generate one?")
         config_generation.setInformativeText("(In the same directory as the executable)")
         config_generation.setFont(get_font(self.font_size))
         config_generation.setIcon(QMessageBox.Warning)
