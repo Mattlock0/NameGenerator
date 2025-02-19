@@ -2,7 +2,7 @@
 from pathlib import Path
 
 # qt imports
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QMessageBox
 
 # project imports
@@ -10,7 +10,7 @@ from src.settings_dialog import SettingsDialog
 from src.tuning_dialog import TuningDialog
 from src.generator_v2 import Generator
 from src.settings import Settings
-from src.utils import *
+from src.utils import log, func_name, LIGHTMODE, DARKMODE, Border, get_border, style_button, get_font
 
 # consts
 MAX_NAME_GEN = 40

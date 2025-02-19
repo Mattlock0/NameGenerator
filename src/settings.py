@@ -56,7 +56,7 @@ class Settings:
 
     def save(self):
         log.trace(f"Entered: Settings.{func_name()}")
-        log.info(f"Saving settings to file...")
+        log.info("Saving settings to file...")
 
         with open(self.path, 'w') as configfile:
             self.write(configfile)

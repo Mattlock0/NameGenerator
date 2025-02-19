@@ -1,13 +1,12 @@
 # system imports
 from pathlib import Path
-import math
 
 # qt imports
 from PyQt5 import QtCore, QtWidgets
 
 # project imports
 from src.generator_v2 import Generator
-from src.utils import *
+from src.utils import Mode, get_font, log, get_border, Border, style_button
 
 
 class TuningDialog(QtWidgets.QDialog):

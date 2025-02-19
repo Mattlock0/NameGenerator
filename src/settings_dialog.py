@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 # project imports
 from src.settings import Settings
-from src.utils import *
+from src.utils import Mode, get_font, log, func_name, get_border, Border, style_button, LIGHTMODE, DARKMODE
 
 
 class SettingsDialog(QtWidgets.QDialog):
