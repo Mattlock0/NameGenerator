@@ -1,29 +1,9 @@
-# system imports
-from pathlib import Path
-
 # project imports
 from src.iterator import Iterator
 from src.tuning import Tuning
 from src.utils import *
 
-LITERAL_SYMBOLS = ['\\', '/', '|', '$', '@']
-CONSONANTS = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'r', 's', 't', 'v', 'w']
-RARE_CONSONANTS = {'p': 252, 'z': 191, 'x': 71, 'q': 61, 'y': 35}
-DIAGRAPHS = {'sh': 275, 'th': 219, 'ch': 185, 'ck': 77, 'ph': 71, 'qu': 58, 'ng': 58}
-DOUBLE_CONSONANTS = {'ll': 398, 'nn': 310, 'tt': 199, 'rr': 157, 'ss': 126, 'mm': 44, 'dd': 31, 'ff': 29, 'bb': 27}
-VOWELS = ['a', 'e', 'i', 'o', 'u', 'y']
-DOUBLE_VOWELS = {'ee': 152, 'oo': 28, 'aa': 15}
-
-ALL_SYMBOLS = [CONSONANTS, RARE_CONSONANTS, DIAGRAPHS, DOUBLE_CONSONANTS, VOWELS, DOUBLE_VOWELS]
-
-
-class Symbols(IntEnum):
-    CONSONANT = 0
-    RARE_CONSONANT = 1
-    DIAGRAPH = 2
-    DOUBLE_CONSONANT = 3
-    VOWEL = 4
-    DOUBLE_VOWEL = 5
+from symbols import *
 
 
 class Generator:

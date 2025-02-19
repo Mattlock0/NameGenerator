@@ -179,6 +179,7 @@ def meld(list1, list2, verbose=False):
 
 
 if __name__ == '__main__':
+    # STANDARD NAME TESTING
     file = open("../../data/all_names.csv", "r")
     data = list(csv.reader(file))
     file.close()
@@ -188,14 +189,39 @@ if __name__ == '__main__':
 
     full_data = meld(data, data2, True)
 
-    # template_frequency = flatten_and_sort(data, name_to_template)
-    # diagraph_frequency = flatten_and_sort(data, diagraph_name_template)
-    # double_frequency = extract_doubles(flatten_and_sort(data, common_pairs_template))
-    # consonant_pair_frequency = extract_consonant_pairs(extract_pairs(flatten_and_sort(data, common_pairs_template)))
-    # vowel_pair_frequency = extract_vowel_pairs(extract_pairs(flatten_and_sort(data, common_pairs_template)))
-    #
-    # print(f"Template Frequency: {template_frequency}")
-    # print(f"Diagraph Frequency: {diagraph_frequency}")
-    # print(f"Double Frequency: {double_frequency}")
-    # print(f"Consonant Pair Frequency: {consonant_pair_frequency}")
-    # print(f"Vowel Pair Frequency: {vowel_pair_frequency}")
+    # print(full_data)
+    with open("../../data/new_full_set.csv", "w", newline='') as file:
+        writer = csv.writer(file)
+        for name in full_data:
+            writer.writerow([name])
+
+    """# Database name testing
+    template_frequency = flatten_and_sort(data, name_to_template)
+    diagraph_frequency = flatten_and_sort(data, diagraph_name_template)
+    double_frequency = extract_doubles(flatten_and_sort(data, common_pairs_template))
+    consonant_pair_frequency = extract_consonant_pairs(extract_pairs(flatten_and_sort(data, common_pairs_template)))
+    vowel_pair_frequency = extract_vowel_pairs(extract_pairs(flatten_and_sort(data, common_pairs_template)))
+
+    print(f"Template Frequency: {template_frequency}")
+    print(f"Diagraph Frequency: {diagraph_frequency}")
+    print(f"Double Frequency: {double_frequency}")
+    print(f"Consonant Pair Frequency: {consonant_pair_frequency}")
+    print(f"Vowel Pair Frequency: {vowel_pair_frequency}")"""
+
+    """# SKAA NAME TESTING
+    file = open("../../data/skaa_names.csv", "r")
+    data = list(csv.reader(file))
+    file.close()
+
+    template_frequency = flatten_and_sort(data, name_to_template)
+    diagraph_frequency = flatten_and_sort(data, diagraph_name_template)
+    double_frequency = extract_doubles(flatten_and_sort(data, common_pairs_template))
+    consonant_pair_frequency = extract_consonant_pairs(extract_pairs(flatten_and_sort(data, common_pairs_template)))
+    vowel_pair_frequency = extract_vowel_pairs(extract_pairs(flatten_and_sort(data, common_pairs_template)))
+
+    print(f"Template Frequency: {template_frequency}")
+    print(f"Diagraph Frequency: {diagraph_frequency}")
+    print(f"Double Frequency: {double_frequency}")
+    print(f"Consonant Pair Frequency: {consonant_pair_frequency}")
+    print(f"Vowel Pair Frequency: {vowel_pair_frequency}")
+    """

@@ -11,7 +11,11 @@ from src.utils import func_name
 
 class Settings:
     def __init__(self, config_path: Path):
+        # not inheriting because I want to have easier
+        # access to the functions and don't need
+        # everything else
         self._configparser = ConfigParser()
+
         self.path = config_path
         self.read(config_path)
 
