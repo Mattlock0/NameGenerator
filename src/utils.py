@@ -27,7 +27,6 @@ def random_choice(choices):
         return random.choice(choices)
     return random.choices(list(choices.keys()), weights=list(choices.values()), k=1)[0]
 
-
 def get_font(pt_size):
     log.trace(f"Entered: utils.{func_name()}")
     font = QtGui.QFont()
@@ -36,7 +35,6 @@ def get_font(pt_size):
     font.setWeight(75)
 
     return font
-
 
 def get_border(border_type: Border, shading: Mode) -> str:
     log.trace(f"Entered: utils.{func_name()}")
@@ -57,7 +55,6 @@ def get_border(border_type: Border, shading: Mode) -> str:
                 f"border-top: 1px solid {shading.light_border}; border-left: 1px solid {shading.light_border}; border"
                 f"-right: 3px solid {shading.border}; border-bottom: 3px solid {shading.border}\n")
     return ""
-
 
 def style_button(shading: Mode) -> str:
     log.trace(f"Entered: utils.{func_name()}")
@@ -82,10 +79,8 @@ def style_button(shading: Mode) -> str:
             f"{inset_border}"
             "}\n")
 
-
 def func_name():
     return inspect.currentframe().f_back.f_code.co_name
-
 
 def add_log_level(level_name, level_num, method_name=None):
     """
